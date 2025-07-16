@@ -1,0 +1,444 @@
+{
+    "abi": [
+        {
+            "type": "constructor",
+            "inputs": [
+                {
+                    "name": "_vaultImplementation",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "chainIdToVault",
+            "inputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "createVault",
+            "inputs": [
+                {
+                    "name": "chainId",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "vault",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "getVaultAddresses",
+            "inputs": [
+                {
+                    "name": "user",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "predicted",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "userToVaults",
+            "inputs": [
+                {
+                    "name": "",
+                    "type": "address",
+                    "internalType": "address"
+                },
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "vaultAddress",
+                    "type": "address",
+                    "internalType": "address"
+                },
+                {
+                    "name": "chainId",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "vaultImplementation",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "event",
+            "name": "vaultCreated",
+            "inputs": [
+                {
+                    "name": "user",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                },
+                {
+                    "name": "vaultAddress",
+                    "type": "address",
+                    "indexed": false,
+                    "internalType": "address"
+                },
+                {
+                    "name": "chainId",
+                    "type": "uint256",
+                    "indexed": false,
+                    "internalType": "uint256"
+                }
+            ],
+            "anonymous": false
+        },
+        {
+            "type": "error",
+            "name": "FailedDeployment",
+            "inputs": []
+        },
+        {
+            "type": "error",
+            "name": "InsufficientBalance",
+            "inputs": [
+                {
+                    "name": "balance",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                },
+                {
+                    "name": "needed",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ]
+        }
+    ],
+    "bytecode": {
+        "object": "0x60a060405234801561000f575f80fd5b5060405161065f38038061065f83398101604081905261002e9161010e565b6001600160a01b03166080525f60208190527fada5013122d395ba3c54772283fb069b10426056ef8ca54750cb9bb552a59e7d80546001600160a01b031990811673a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48179091557f8839e33ea8bc27e2dca8c9b90c78bcf651bd5273f6d53154cb494f42572e41d880548216732791bca1f25db3af4ed8f9ef7ba6c0cbf4be8fd617905561a4b19091527faf53aac3c4613282336edb809001bb3c8f8a5f4f8bef81faa04ce7c3b152209c805490911673ff970a61a04b1ca14834a43f5de4533ebddb5cc817905561013b565b5f6020828403121561011e575f80fd5b81516001600160a01b0381168114610134575f80fd5b9392505050565b6080516104ff6101605f395f818160a10152818161019e01526102be01526104ff5ff3fe608060405234801561000f575f80fd5b5060043610610055575f3560e01c8063695ee8de146100595780639abbdf4b14610089578063bba48a901461009c578063bdf9a08d146100c3578063e61a87571461011c575b5f80fd5b61006c610067366004610471565b610144565b6040516001600160a01b0390911681526020015b60405180910390f35b61006c61009736600461048a565b61020e565b61006c7f000000000000000000000000000000000000000000000000000000000000000081565b6100fd6100d13660046104a1565b600160208181525f9384526040808520909152918352912080549101546001600160a01b039091169082565b604080516001600160a01b039093168352602083019190915201610080565b61006c61012a36600461048a565b5f602081905290815260409020546001600160a01b031681565b6040516bffffffffffffffffffffffff19606083901b1660208201525f90819060340160408051808303601f190181529082905280516020909101203060388301526f5af43d82803e903d91602b57fd5bf3ff60248301527f00000000000000000000000000000000000000000000000000000000000000006001600160a01b039081166014840152733d602d80600a3d3981f3363d3d373d3d3d363d738352605883018290526037600c84012060788401526055604390930192909220909250165b9392505050565b335f9081526001602090815260408083208484529091528120546001600160a01b0316156102775760405162461bcd60e51b81526020600482015260126024820152711d5cd95c88185b1c9958591e48195e1a5cdd60721b604482015260640160405180910390fd5b6040516bffffffffffffffffffffffff193360601b1660208201525f9060340160408051601f19818403018152919052805160209091012090506102e46001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016826103e4565b5f848152602081905260409081902054905163ef88bf1360e01b81523360048201526001600160a01b03918216602482015291935083169063ef88bf13906044015f604051808303815f87803b15801561033c575f80fd5b505af115801561034e573d5f803e3d5ffd5b50506040805180820182526001600160a01b0386811680835260208084018a8152335f81815260018085528882208e8352855290889020965187546001600160a01b031916961695909517865590519490930193909355835190815291820188905293507f68e092b6279fb2d0cbbb1b9c4c95346e095948ac67e389fde1605e293d860ae892500160405180910390a250919050565b5f61020783838380763d602d80600a3d3981f3363d3d373d3d3d363d730000008460601b60e81c175f526e5af43d82803e903d91602b57fd5bf38460781b17602052826037600984f590506001600160a01b0381166102075760405163b06ebf3d60e01b815260040160405180910390fd5b80356001600160a01b038116811461046c575f80fd5b919050565b5f60208284031215610481575f80fd5b61020782610456565b5f6020828403121561049a575f80fd5b5035919050565b5f80604083850312156104b2575f80fd5b6104bb83610456565b94602093909301359350505056fea2646970667358221220187df3cbb0b3d23e5478021b976195cf15b4de9943346b2d9856faf1aaf63ddf64736f6c63430008140033",
+        "sourceMap": "227:1729:20:-:0;;;483:423;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;-1:-1:-1;;;;;535:42:20;;;587:14;:17;;;;;:62;;-1:-1:-1;;;;;;587:62:20;;;607:42;587:62;;;;683:19;:64;;;;705:42;683:64;;;830:5;815:21;;;;:66;;;;;839:42;815:66;;;227:1729;;14:290:22;84:6;137:2;125:9;116:7;112:23;108:32;105:52;;;153:1;150;143:12;105:52;179:16;;-1:-1:-1;;;;;224:31:22;;214:42;;204:70;;270:1;267;260:12;204:70;293:5;14:290;-1:-1:-1;;;14:290:22:o;:::-;227:1729:20;;;;;;;;;;;;;;;;;;;;;;",
+        "linkReferences": {}
+    },
+    "deployedBytecode": {
+        "object": "0x608060405234801561000f575f80fd5b5060043610610055575f3560e01c8063695ee8de146100595780639abbdf4b14610089578063bba48a901461009c578063bdf9a08d146100c3578063e61a87571461011c575b5f80fd5b61006c610067366004610471565b610144565b6040516001600160a01b0390911681526020015b60405180910390f35b61006c61009736600461048a565b61020e565b61006c7f000000000000000000000000000000000000000000000000000000000000000081565b6100fd6100d13660046104a1565b600160208181525f9384526040808520909152918352912080549101546001600160a01b039091169082565b604080516001600160a01b039093168352602083019190915201610080565b61006c61012a36600461048a565b5f602081905290815260409020546001600160a01b031681565b6040516bffffffffffffffffffffffff19606083901b1660208201525f90819060340160408051808303601f190181529082905280516020909101203060388301526f5af43d82803e903d91602b57fd5bf3ff60248301527f00000000000000000000000000000000000000000000000000000000000000006001600160a01b039081166014840152733d602d80600a3d3981f3363d3d373d3d3d363d738352605883018290526037600c84012060788401526055604390930192909220909250165b9392505050565b335f9081526001602090815260408083208484529091528120546001600160a01b0316156102775760405162461bcd60e51b81526020600482015260126024820152711d5cd95c88185b1c9958591e48195e1a5cdd60721b604482015260640160405180910390fd5b6040516bffffffffffffffffffffffff193360601b1660208201525f9060340160408051601f19818403018152919052805160209091012090506102e46001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016826103e4565b5f848152602081905260409081902054905163ef88bf1360e01b81523360048201526001600160a01b03918216602482015291935083169063ef88bf13906044015f604051808303815f87803b15801561033c575f80fd5b505af115801561034e573d5f803e3d5ffd5b50506040805180820182526001600160a01b0386811680835260208084018a8152335f81815260018085528882208e8352855290889020965187546001600160a01b031916961695909517865590519490930193909355835190815291820188905293507f68e092b6279fb2d0cbbb1b9c4c95346e095948ac67e389fde1605e293d860ae892500160405180910390a250919050565b5f61020783838380763d602d80600a3d3981f3363d3d373d3d3d363d730000008460601b60e81c175f526e5af43d82803e903d91602b57fd5bf38460781b17602052826037600984f590506001600160a01b0381166102075760405163b06ebf3d60e01b815260040160405180910390fd5b80356001600160a01b038116811461046c575f80fd5b919050565b5f60208284031215610481575f80fd5b61020782610456565b5f6020828403121561049a575f80fd5b5035919050565b5f80604083850312156104b2575f80fd5b6104bb83610456565b94602093909301359350505056fea2646970667358221220187df3cbb0b3d23e5478021b976195cf15b4de9943346b2d9856faf1aaf63ddf64736f6c63430008140033",
+        "sourceMap": "227:1729:20:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1712:242;;;;;;:::i;:::-;;:::i;:::-;;;-1:-1:-1;;;;;547:32:22;;;529:51;;517:2;502:18;1712:242:20;;;;;;;;1103:603;;;;;;:::i;:::-;;:::i;372:44::-;;;;;912:69;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;912:69:20;;;;;;;;;;-1:-1:-1;;;;;1227:32:22;;;1209:51;;1291:2;1276:18;;1269:34;;;;1182:18;912:69:20;1035:274:22;422:49:20;;;;;;:::i;:::-;;;;;;;;;;;;;-1:-1:-1;;;;;422:49:20;;;1712:242;1834:22;;-1:-1:-1;;1463:2:22;1459:15;;;1455:53;1834:22:20;;;1443:66:22;1771:17:20;;;;1525:12:22;;1834:22:20;;;;;;-1:-1:-1;;1834:22:20;;;;;;;1824:33;;1834:22;1824:33;;;;1941:4;4814::15;4805:14;;4798:32;4866:34;4859:4;4850:14;;4843:58;1879:19:20;-1:-1:-1;;;;;1879:47:20;;;-1:-1:-1;4921:14:15;;4914:38;4977:42;4965:55;;5049:4;5040:14;;5033:28;;;5123:4;5116;5107:14;;5097:31;5090:4;5081:14;;5074:55;5185:4;5178;5169:14;;;5159:31;;;;1824:33:20;;-1:-1:-1;5155:80:15;1879:68:20;1867:80;1712:242;-1:-1:-1;;;1712:242:20:o;1103:603::-;1216:10;1157:13;1203:24;;;:12;:24;;;;;;;;:33;;;;;;;;:46;-1:-1:-1;;;;;1203:46:20;:60;1182:125;;;;-1:-1:-1;;;1182:125:20;;1750:2:22;1182:125:20;;;1732:21:22;1789:2;1769:18;;;1762:30;-1:-1:-1;;;1808:18:22;;;1801:48;1866:18;;1182:125:20;;;;;;;;1343:28;;-1:-1:-1;;1360:10:20;1463:2:22;1459:15;1455:53;1343:28:20;;;1443:66:22;1318:12:20;;1525::22;;1343:28:20;;;-1:-1:-1;;1343:28:20;;;;;;;;;1333:39;;1343:28;1333:39;;;;;-1:-1:-1;1390:44:20;-1:-1:-1;;;;;1390:19:20;:38;1333:39;1390:38;:44::i;:::-;1481:14;:23;;;;;;;;;;;;;1444:61;;-1:-1:-1;;;1444:61:20;;1469:10;1444:61;;;2107:34:22;-1:-1:-1;;;;;1481:23:20;;;2157:18:22;;;2150:43;1382:52:20;;-1:-1:-1;1444:24:20;;;;;2042:18:22;;1444:61:20;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;1551:93:20;;;;;;;;-1:-1:-1;;;;;1551:93:20;;;;;;;;;;;;;1528:10;-1:-1:-1;1515:24:20;;;:12;:24;;;;;;:33;;;;;;;;;:129;;;;-1:-1:-1;;;;;;1515:129:20;;;;;;;;;;;;;;;;;;;1659:40;;1209:51:22;;;1276:18;;;1269:34;;;1528:10:20;-1:-1:-1;1659:40:20;;-1:-1:-1;1182:18:22;1659:40:20;;;;;;;1172:534;1103:603;;;:::o;2870:169:15:-;2954:16;2989:43;3008:14;3024:4;2954:16;;4031:48;4013:14;4007:4;4003:25;3997:4;3993:36;3990:90;3984:4;3977:104;4238:32;4221:14;4215:4;4211:25;4208:63;4202:4;4195:77;4324:4;4318;4312;4305:5;4297:32;4285:44;-1:-1:-1;;;;;;4352:22:15;;4348:85;;4397:25;;-1:-1:-1;;;4397:25:15;;;;;;;;;;;14:173:22;82:20;;-1:-1:-1;;;;;131:31:22;;121:42;;111:70;;177:1;174;167:12;111:70;14:173;;;:::o;192:186::-;251:6;304:2;292:9;283:7;279:23;275:32;272:52;;;320:1;317;310:12;272:52;343:29;362:9;343:29;:::i;591:180::-;650:6;703:2;691:9;682:7;678:23;674:32;671:52;;;719:1;716;709:12;671:52;-1:-1:-1;742:23:22;;591:180;-1:-1:-1;591:180:22:o;776:254::-;844:6;852;905:2;893:9;884:7;880:23;876:32;873:52;;;921:1;918;911:12;873:52;944:29;963:9;944:29;:::i;:::-;934:39;1020:2;1005:18;;;;992:32;;-1:-1:-1;;;776:254:22:o",
+        "linkReferences": {},
+        "immutableReferences": {
+            "36064": [
+                {
+                    "start": 161,
+                    "length": 32
+                },
+                {
+                    "start": 414,
+                    "length": 32
+                },
+                {
+                    "start": 702,
+                    "length": 32
+                }
+            ]
+        }
+    },
+    "methodIdentifiers": {
+        "chainIdToVault(uint256)": "e61a8757",
+        "createVault(uint256)": "9abbdf4b",
+        "getVaultAddresses(address)": "695ee8de",
+        "userToVaults(address,uint256)": "bdf9a08d",
+        "vaultImplementation()": "bba48a90"
+    },
+    "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_vaultImplementation\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"FailedDeployment\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"needed\",\"type\":\"uint256\"}],\"name\":\"InsufficientBalance\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"vaultAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"}],\"name\":\"vaultCreated\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"chainIdToVault\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"}],\"name\":\"createVault\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"vault\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getVaultAddresses\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"predicted\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"userToVaults\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"vaultAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"vaultImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"FailedDeployment()\":[{\"details\":\"The deployment failed.\"}],\"InsufficientBalance(uint256,uint256)\":[{\"details\":\"The ETH balance of the account is not enough to perform the operation.\"}]},\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/FactoryVault.sol\":\"VaultFactory\"},\"evmVersion\":\"shanghai\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin-contracts/=lib/openzeppelin-contracts/\",\":@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/\",\":erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/\",\":forge-std/=lib/forge-std/src/\",\":halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\"]},\"sources\":{\"lib/openzeppelin-contracts/contracts/proxy/Clones.sol\":{\"keccak256\":\"0x7162fa3c6971aa6f0a70160fed018edbb8b1db3af9b034ef3f7c224c3bdb7431\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f212d25e8f357209838ad7ce8ebc89de79906d9fe580566962e889ecb090e6b4\",\"dweb:/ipfs/QmdbLuLwX24VB1Gdrabke584WyaUkuJSWuDzzuRgqAMFge\"]},\"lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://df6f0c459663c9858b6cba2cda1d14a7d05a985bed6d2de72bd8e78c25ee79db\",\"dweb:/ipfs/QmeTTxZ7qVk9rjEv2R4CpCwdf8UMCcRqDNMvzNxHc3Fnn9\"]},\"lib/openzeppelin-contracts/contracts/utils/Create2.sol\":{\"keccak256\":\"0xbb7e8401583d26268ea9103013bcdcd90866a7718bd91105ebd21c9bf11f4f06\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://866a11ad89c93ee918078f7a46ae31e17d89216ce64603f0d34be7ed0a5c520e\",\"dweb:/ipfs/QmW3ckLEJg2v2NzuVLNJFmRuerGSipw6Dzg6ntbmqbAGoC\"]},\"lib/openzeppelin-contracts/contracts/utils/Errors.sol\":{\"keccak256\":\"0x6afa713bfd42cf0f7656efa91201007ac465e42049d7de1d50753a373648c123\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ba1d02f4847670a1b83dec9f7d37f0b0418d6043447b69f3a29a5f9efc547fcf\",\"dweb:/ipfs/QmQ7iH2keLNUKgq2xSWcRmuBE5eZ3F5whYAkAGzCNNoEWB\"]},\"src/FactoryVault.sol\":{\"keccak256\":\"0xda905bd636a13644ea7f52788af8d96fb56aee95a4d987019f11d9abf1f09d59\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4026ec25f4b9ddd876b953998f43f3100d9b66e42774043c432028c56f96f9c9\",\"dweb:/ipfs/QmQFzBJfghz77rRdRAwkHZ2xqQxRmaY8gBY24wAM5wk9mX\"]},\"src/Vault.sol\":{\"keccak256\":\"0x1730333bf654c5bf835b56ef35e40bf8e8f73a529368636a3ae4b1ccd39f4c75\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0dc85e106cbd02d67c42c76f8111f9b103d7e046ad86cacdab73ee43fd180712\",\"dweb:/ipfs/QmPwuqPbMPgn2rJh1fJo4vjS7jufpdsvd88kfqBXuBXTSQ\"]}},\"version\":1}",
+    "metadata": {
+        "compiler": {
+            "version": "0.8.20+commit.a1b79de6"
+        },
+        "language": "Solidity",
+        "output": {
+            "abi": [
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "_vaultImplementation",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "constructor"
+                },
+                {
+                    "inputs": [],
+                    "type": "error",
+                    "name": "FailedDeployment"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "balance",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "needed",
+                            "type": "uint256"
+                        }
+                    ],
+                    "type": "error",
+                    "name": "InsufficientBalance"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "user",
+                            "type": "address",
+                            "indexed": true
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "vaultAddress",
+                            "type": "address",
+                            "indexed": false
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "chainId",
+                            "type": "uint256",
+                            "indexed": false
+                        }
+                    ],
+                    "type": "event",
+                    "name": "vaultCreated",
+                    "anonymous": false
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "chainIdToVault",
+                    "outputs": [
+                        {
+                            "internalType": "address",
+                            "name": "",
+                            "type": "address"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "chainId",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function",
+                    "name": "createVault",
+                    "outputs": [
+                        {
+                            "internalType": "address",
+                            "name": "vault",
+                            "type": "address"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "user",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function",
+                    "name": "getVaultAddresses",
+                    "outputs": [
+                        {
+                            "internalType": "address",
+                            "name": "predicted",
+                            "type": "address"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "userToVaults",
+                    "outputs": [
+                        {
+                            "internalType": "address",
+                            "name": "vaultAddress",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "chainId",
+                            "type": "uint256"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "vaultImplementation",
+                    "outputs": [
+                        {
+                            "internalType": "address",
+                            "name": "",
+                            "type": "address"
+                        }
+                    ]
+                }
+            ],
+            "devdoc": {
+                "kind": "dev",
+                "methods": {},
+                "version": 1
+            },
+            "userdoc": {
+                "kind": "user",
+                "methods": {},
+                "version": 1
+            }
+        },
+        "settings": {
+            "remappings": [
+                "@openzeppelin-contracts/=lib/openzeppelin-contracts/",
+                "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+                "erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
+                "forge-std/=lib/forge-std/src/",
+                "halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+                "openzeppelin-contracts/=lib/openzeppelin-contracts/"
+            ],
+            "optimizer": {
+                "enabled": true,
+                "runs": 200
+            },
+            "metadata": {
+                "bytecodeHash": "ipfs"
+            },
+            "compilationTarget": {
+                "src/FactoryVault.sol": "VaultFactory"
+            },
+            "evmVersion": "shanghai",
+            "libraries": {}
+        },
+        "sources": {
+            "lib/openzeppelin-contracts/contracts/proxy/Clones.sol": {
+                "keccak256": "0x7162fa3c6971aa6f0a70160fed018edbb8b1db3af9b034ef3f7c224c3bdb7431",
+                "urls": [
+                    "bzz-raw://f212d25e8f357209838ad7ce8ebc89de79906d9fe580566962e889ecb090e6b4",
+                    "dweb:/ipfs/QmdbLuLwX24VB1Gdrabke584WyaUkuJSWuDzzuRgqAMFge"
+                ],
+                "license": "MIT"
+            },
+            "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+                "keccak256": "0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7",
+                "urls": [
+                    "bzz-raw://df6f0c459663c9858b6cba2cda1d14a7d05a985bed6d2de72bd8e78c25ee79db",
+                    "dweb:/ipfs/QmeTTxZ7qVk9rjEv2R4CpCwdf8UMCcRqDNMvzNxHc3Fnn9"
+                ],
+                "license": "MIT"
+            },
+            "lib/openzeppelin-contracts/contracts/utils/Create2.sol": {
+                "keccak256": "0xbb7e8401583d26268ea9103013bcdcd90866a7718bd91105ebd21c9bf11f4f06",
+                "urls": [
+                    "bzz-raw://866a11ad89c93ee918078f7a46ae31e17d89216ce64603f0d34be7ed0a5c520e",
+                    "dweb:/ipfs/QmW3ckLEJg2v2NzuVLNJFmRuerGSipw6Dzg6ntbmqbAGoC"
+                ],
+                "license": "MIT"
+            },
+            "lib/openzeppelin-contracts/contracts/utils/Errors.sol": {
+                "keccak256": "0x6afa713bfd42cf0f7656efa91201007ac465e42049d7de1d50753a373648c123",
+                "urls": [
+                    "bzz-raw://ba1d02f4847670a1b83dec9f7d37f0b0418d6043447b69f3a29a5f9efc547fcf",
+                    "dweb:/ipfs/QmQ7iH2keLNUKgq2xSWcRmuBE5eZ3F5whYAkAGzCNNoEWB"
+                ],
+                "license": "MIT"
+            },
+            "src/FactoryVault.sol": {
+                "keccak256": "0xda905bd636a13644ea7f52788af8d96fb56aee95a4d987019f11d9abf1f09d59",
+                "urls": [
+                    "bzz-raw://4026ec25f4b9ddd876b953998f43f3100d9b66e42774043c432028c56f96f9c9",
+                    "dweb:/ipfs/QmQFzBJfghz77rRdRAwkHZ2xqQxRmaY8gBY24wAM5wk9mX"
+                ],
+                "license": "MIT"
+            },
+            "src/Vault.sol": {
+                "keccak256": "0x1730333bf654c5bf835b56ef35e40bf8e8f73a529368636a3ae4b1ccd39f4c75",
+                "urls": [
+                    "bzz-raw://0dc85e106cbd02d67c42c76f8111f9b103d7e046ad86cacdab73ee43fd180712",
+                    "dweb:/ipfs/QmPwuqPbMPgn2rJh1fJo4vjS7jufpdsvd88kfqBXuBXTSQ"
+                ],
+                "license": "MIT"
+            }
+        },
+        "version": 1
+    },
+    "id": 20
+}
