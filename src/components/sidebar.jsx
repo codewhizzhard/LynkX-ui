@@ -19,7 +19,7 @@ const Sidebar = () => {
     
     
   return (
-    <div className='py-10 h-full'>
+    <div className='py-10 z-0'>
      <ul className='flex flex-col gap-8 px-2'>{
         sidebarData[pathParts].map((content, index) => (
             <Link to={`/${userType}${content.to}`}><li key={index} className={`py-4  rounded pl-2 text-[14px] font-bold  border-2 border-blue-500 ${locate.pathname === `/${userType}${content.to}` ? "bg-blue-500 text-white" : "bg-blue-100 text-blue-500"}`}>{content.name}</li></Link>

@@ -2,7 +2,7 @@ import React from 'react'
 
 const ProviderDashboard = () => {
   return (
-    <div>Provider Dashboard</div>
+    <section>Provider Dashboard</section>
   )
 }
 export default ProviderDashboard

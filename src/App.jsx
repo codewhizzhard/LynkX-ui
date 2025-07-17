@@ -6,6 +6,7 @@ import Dashboard from "./pages/merchant/dashboard";
 import Receive from "./pages/merchant/receive";
 import Missing from "./pages/missing";
 import DisplayDashboard from "./pages/displays/displayDashboard";
+import Withdraw from "./pages/merchant/withdraw";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path={"/:userType"} element={<Layout />}>
         <Route index element={<DisplayDashboard />}/>
         <Route path="receive" element={<Receive />} />
+        <Route path="withdraw" element={<Withdraw />} />
         </Route>
         <Route path="*" element={<Missing />} />
       </Routes> 
