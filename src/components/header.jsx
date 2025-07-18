@@ -36,14 +36,14 @@ const Header = () => {
   return (
     <header className='h-[70px] bg-gray-800 text-white flex fixed top-0 left-0 right-0 z-50 w-full'>
         <div className='w-[300px] border-2 border-white'>
-            <img src="" alt="" />hh
+            <img src="" alt="logo" />
         </div>
         <div className='flex-grow border-2 border-white px-6 flex justify-between items-center'>
-            <p>hhhh</p>
+            <p>HI, USER</p>
             <div className='flex gap-8 items-center relative'>
                 <div className='bg-blue-500 py-3 px-6 rounded-[8px] font-bold text-[17px]'>
                 {isConnected ? (
-                    <p className='text-white'>{address.slice(0,6) + "..."}</p>
+                    <p className='text-white'>{address.slice(0,4) + "..." + address.slice(-3)}</p>
                 ) : (
                     <p className='text-red-300'>Not connected</p>
                 )}
