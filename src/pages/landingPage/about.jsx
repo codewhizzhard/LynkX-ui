@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 const About = () => {
 
-    const locate = useLocation();
+   
     const [role, setRoles] = useState("Merchant(M)");
 
     const abouts = {

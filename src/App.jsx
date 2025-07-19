@@ -9,6 +9,7 @@ import DisplayDashboard from "./pages/displays/displayDashboard";
 import Withdraw from "./pages/merchant/withdraw";
 import MainRoute from "./pages/landingPage/mainRoute";
 import About from "./pages/landingPage/about";
+import Role from "./pages/landingPage/role";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/" element={<MainRoute />}>
           <Route index element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/roles" element={<Role />} />
         
         <Route path="*" element={<Missing />} />
         </Route>

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useSignMessage } from 'wagmi';
 import lynkXData from '../../service/axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {useEffect} from "react";
 import bg from "../../assets/landingPage/bg.png";
 import logo from "../../assets/landingPage/logo.png";
@@ -17,6 +17,7 @@ const MainRoute = () => {
     const [signIn, setSignIn] = useState(false);
 
     const navigate = useNavigate();
+     const locate = useLocation();
     
     /* useEffect(() => {
         const token = localStorage.getItem("token");
@@ -34,8 +35,8 @@ const MainRoute = () => {
                 <h1 className='font-bold text-2xl italic'>LynkX</h1>
             </Link>
             <div className='flex gap-8'>
-                <Link className='text-[18px] pt-2 italic cursor-pointer font-semibold' to={"/about"}>About</Link>
-                <p className='text-[18px] pt-2 italic cursor-pointer font-semibold'>Roles</p>
+                <Link className={`text-[18px] pt-2 italic cursor-pointer font-semibold ${locate.pathname === "/about" ? "text-[#009FBD]" : ""}`} to={"/about"}>About</Link>
+                <Link to={"/roles"} className={`text-[18px] pt-2 italic cursor-pointer font-semibold ${locate.pathname === "/roles" ? "text-[#009FBD]" : ""}`} >Roles</Link>
                 <span>{address ? <p className='text-[18px] mt-[6px] italic border-2 border-[#009FBD] rounded-[10px] px-4 font-semibold'>{`${address.slice(0,3)}...${address.slice(-3)}`}</p> : <ConnectButton />}</span>
             </div>
         </header>
