@@ -36,7 +36,7 @@ const Header = () => {
   return (
     <header className='h-[70px] bg-gray-800 text-white flex fixed top-0 left-0 right-0 z-50 w-full'>
         <div className='w-[300px] border-2 border-white'>
-            <img src="" alt="logo" />
+            <img src="" alt="logo" className='px-6 py-3'/>
         </div>
         <div className='flex-grow border-2 border-white px-6 flex justify-between items-center'>
             <p>HI, USER</p>

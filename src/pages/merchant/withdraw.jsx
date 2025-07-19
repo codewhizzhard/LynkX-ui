@@ -1,4 +1,5 @@
 import React from 'react'
+import { FiDollarSign } from 'react-icons/fi';
 import { useAccount } from 'wagmi'
 
 
@@ -16,7 +17,7 @@ const Withdraw = () => {
             <form className='border-r-15 border-l-15 border-r-red-500 border-l-blue-500 w-[60%] space-y-4 p-3 rounded-[11px] text-gray-800'>
                 <div className='flex flex-col gap-2'>
                     <label htmlFor=""  className='text-[14px] font-semibold'>Amout</label>
-                    <span className='flex gap-2'> <input type="text" className=' bg-blue-100 p-2 pl-4 rounded-[11px] flex-grow outline-none' placeholder='Enter amount to withdraw' /> <button type='button' className='w-[10%] bg-red-500 rounded-[6px] cursor-pointer'>Max</button></span>
+                    <span className='flex gap-2 relative'> <input type="text" className=' bg-blue-100 p-2 pl-6 rounded-[11px] flex-grow outline-none' placeholder='Enter amount to withdraw' /> <button type='button' className='w-[10%] bg-red-500 rounded-[6px] cursor-pointer text-[15px] font-semibold'>Max</button> <FiDollarSign className='absolute left-2 top-[13px]'/></span>
                 </div>
                 <div  className='flex flex-col gap-2 pt-8'>
                     <label htmlFor=""  className='text-[14px] font-semibold'>From</label>
