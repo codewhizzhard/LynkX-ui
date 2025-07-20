@@ -26,7 +26,7 @@ const MainRoute = () => {
  */
    
   return (
-    <div style={{backgroundImage: `url(${bg})`, backgroundSize: 'cover', fontFamily: 'ABeeZee, sans-serif' }} className='text-white h-[100vh]  px-12 py-6'>
+    <div style={{backgroundImage: `url(${bg})`, backgroundSize: 'cover', fontFamily: 'ABeeZee, sans-serif' }} className='text-white min-h-[100vh]  px-12 py-6'>
         <header className='flex justify-between items-center px-2'>
             <Link className='flex items-center gap-4' to={"/"}>
                 <div className='h-[39px] w-[24px]'>

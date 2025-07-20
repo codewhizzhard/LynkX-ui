@@ -1,9 +1,136 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FiDollarSign, FiSearch } from 'react-icons/fi'
+import "./scroll.css"
+
 
 const Dashboard = () => {
+
+  const [modal, setModal] = useState(false);
+
+  const vaults = [ {vaultName: "name", vaultAmount: "20000"}, {vaultName: "name", vaultAmount: "20000"},]
+
+
   return (
-    <section className='flex h-full gap-4'>
+    <section className='flex flex-col gap-3 text-[#D9D9D9] overflow-y-hidden'>
+      <div className='border-dashed border-2 border-[#585858] py-2 px-2 justify-center text-[18px] italic flex'>
+        <button type='button' className='bg-[#B0B0B0] rounded-[7px] text-[#292C31] p-2 px-4 cursor-pointer' onClick={() => setModal(true)}>Create Vault</button>
+      </div>
+      <div className='flex gap-4  w-full flex-wrap'>
+        { vaults.map((vault, index) => (
+          <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] justify-center' key={index}>
+            <span>Vault Name:{vault.vaultName}</span>
+            <span>{vault.vaultAmount}</span>
+            <div className='flex '>
+              <button>Withraw</button>
+              <button>Deposit</button>
+            </div>
+          </li>
+        ))
+
+        }
+        <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] justify-center' >
+            <span></span>
+            <span></span>
+            <div className='flex '>
+              <button></button>
+            </div>
+        </li>
+      </div>
+
+      <div className='pt-3'>
+        <div className='border-dashed border-2 border-[#585858] py-1 px-2 justify-center text-[14px] italic flex'>
+        <p className='text-[#B0B0B0] rounded-[7px] px-4' >Vault History</p>
+        </div>
+
+        <div className='flex bg-[#202225] w-full pt-1 px-3'>
+        <span className='flex-1/4'>vaultName</span>
+        <span className='flex-1/4'>hh hhhsyys gtddt</span>
+        <span className='flex-1/4'>hhh hhsyys</span>
+        <span className='flex-1/4 '>hh</span>
+      </div>
+
+        <div className='bg-red-400 overflow-y-auto h-27 py-2 scroll-invisible'   >
+
+        
+      <div className='flex px-3'>
+        <span className='flex-1/4'>hh</span>
+        <span className='flex-1/4'>hh hhhsyys gtddt</span>
+        <span className='flex-1/4'>hhhhhsyys gtddt</span>
+        <span className='flex-1/4'>hh</span>
+      </div>
+      <div className='flex px-3'>
+        <span className='flex-1/4'>hh</span>
+        <span className='flex-1/4'>hh hhhsyys gtddt</span>
+        <span className='flex-1/4'>hhhhhsyys gtddt</span>
+        <span className='flex-1/4'>hh</span>
+      </div>
+      <div className='flex px-3'>
+        <span className='flex-1/4'>hh</span>
+        <span className='flex-1/4'>hh hhhsyys gtddt</span>
+        <span className='flex-1/4'>hhhhhsyys gtddt</span>
+        <span className='flex-1/4'>hh</span>
+      </div>
+      <div className='flex px-3'>
+        <span className='flex-1/4'>hh</span>
+        <span className='flex-1/4'>hh hhhsyys gtddt</span>
+        <span className='flex-1/4'>hhhhhsyys gtddt</span>
+        <span className='flex-1/4'>hh</span>
+      </div>
+      <div className='flex px-3'>
+        <span className='flex-1/4'>hh</span>
+        <span className='flex-1/4'>hh hhhsyys gtddt</span>
+        <span className='flex-1/4'>hhhhhsyys gtddt</span>
+        <span className='flex-1/4'>hh</span>
+      </div>
+      <div className='flex px-3'>
+        <span className='flex-1/4'>hh</span>
+        <span className='flex-1/4'>hh hhhsyys gtddt</span>
+        <span className='flex-1/4'>hhhhhsyys gtddt</span>
+        <span className='flex-1/4'>hh</span>
+      </div>
+      
+
+        </div>
+
+    </div>
+     
+
+
+      {/* pop up */}
+      {modal &&
+      <div className='fixed top-0 w-full bg-black/90 left-0 right-0 h-full flex justify-center items-center flex-col '>
+      <div className='w-[50%] bg-[#009FBD]/50 flex flex-col gap-4 px-10 rounded-[30px] h-[60%] justify-center'>
+          <div className='flex flex-col gap-3'>
+          <label htmlFor="">Vault Name</label>
+          <input type="text" placeholder='#name' className='p-2 bg-[#D9D9D9] outline-none rounded-[7px] text-black'/>
+        </div>
+        <div className='flex flex-col'>
+          <label for="chain" className="block mb-2 text-sm font-medium text-gray-200">Select Chain</label>
+          <select id="chain" className="bg-gray-800 border border-gray-600 text-white text-sm rounded-lg focus:ring-[#009FBD] focus:border-[#009FBD] block p-3 mb-10">
+          <option>Merchant</option>
+          <option>Liquidity Provider</option>
+          <option>Treasury Manager</option>
+        </select>
+        </div>
+        <div className='flex justify-between'>
+          <button type='button' className='py-3 px-6 rounded-[7px] bg-red-500/60 cursor-pointer' onClick={() => setModal(false)}>Cancel</button>
+          <button type='button' className='py-3 px-6 rounded-[7px] bg-green-400/60 cursor-pointer'>Create</button>
+        </div>
+        
+
+      </div>
+      
+
+      </div>
+      }
+    </section>
+    
+  )
+}
+
+export default Dashboard
+
+/* <section className='flex h-full gap-4'>
 
       <div className='flex-grow flex flex-col gap-6'>
         <div className='justify-between flex'>
@@ -93,8 +220,4 @@ const Dashboard = () => {
           <span>Sales</span>
         </div>
       </div>
-    </section>
-  )
-}
-
-export default Dashboard
+    </section> */

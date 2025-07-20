@@ -10,6 +10,7 @@ import Withdraw from "./pages/merchant/withdraw";
 import MainRoute from "./pages/landingPage/mainRoute";
 import About from "./pages/landingPage/about";
 import Role from "./pages/landingPage/role";
+import ProtectedRoutes from "./components/protected";
 
 
 function App() {
@@ -28,8 +29,13 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/roles" element={<Role />} />
-        
-        <Route path="*" element={<Missing />} />
+          <Route path="*" element={<Missing />} />
+        </Route>
+        <Route element={<ProtectedRoutes />}>
+        <Route path="/:userType" element={<Layout />}>
+        <Route index element={<DisplayDashboard />} />
+         <Route path="*" element={<Missing />} />
+        </Route>
         </Route>
       </Routes> 
     </BrowserRouter>

@@ -1,5 +1,5 @@
 const sidebarData = {
-    merchant: [
+    "merchant": [
     {
         name: "Dashboard",
         to: ""
