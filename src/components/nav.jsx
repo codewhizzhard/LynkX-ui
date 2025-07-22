@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom';
 import logo from "../assets/landingPage/logo.png";
 import sidebarData from './sidebarData';
@@ -6,6 +6,9 @@ import sidebarData from './sidebarData';
 const Nav = () => {
 
   const [page, setPage] = useState("Dashboard");
+  /* useEffect(() => {
+    setPage("Dashboard");
+  }, []) */
 
   const locate = useLocation();
   const { userType } = useParams();
@@ -24,7 +27,7 @@ const Nav = () => {
             <div className='flex flex-col justify-between h-[85%]'>
               <ul className='flex flex-col text-white text-[16px] italic font-semibold gap-3 pt-14 '>
               {sidebarData[userType].map((data, index) => (
-                <Link to={`${data.to}`}> <li key={index} className={`cursor-pointer py-3 px-2 rounded-[5px] ${page == data.name ? "bg-[#009FBD] " : ""}`} onClick={() => setPage(data.name)}>{data.name}</li></Link>
+                <Link to={`/${userType}${data.to}`}> <li key={index} className={`cursor-pointer py-3 px-2 rounded-[5px] ${page == data.name ? "bg-[#009FBD] " : ""}`} onClick={() => setPage(data.name)}>{data.name}</li></Link>
               ))}
             </ul>
             <div className='text-red-500/70 text-[16px] italic font-semibold cursor-pointer'>Logout</div>

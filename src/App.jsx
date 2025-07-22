@@ -11,6 +11,7 @@ import MainRoute from "./pages/landingPage/mainRoute";
 import About from "./pages/landingPage/about";
 import Role from "./pages/landingPage/role";
 import ProtectedRoutes from "./components/protected";
+import History from "./pages/merchant/history";
 
 
 function App() {
@@ -34,7 +35,10 @@ function App() {
         <Route element={<ProtectedRoutes />}>
         <Route path="/:userType" element={<Layout />}>
         <Route index element={<DisplayDashboard />} />
-         <Route path="*" element={<Missing />} />
+        <Route path="receive" element={<Receive />} />
+        <Route path="withdraw" element={<Withdraw />} />
+        <Route path="history" element={<History />} />
+        <Route path="*" element={<Missing />} />
         </Route>
         </Route>
       </Routes> 
