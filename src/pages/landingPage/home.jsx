@@ -24,7 +24,7 @@ const Home = () => {
         const signature = await signMessageAsync({message});
         console.log("signature:", signature);
         const post = await lynkXData.post("/auth", {
-            message, address: address.toLowerCase(), signature
+            message, address, signature
         })
         localStorage.setItem("token", post.data.data.userToken);
         console.log("lynkData:", post);
