@@ -21,7 +21,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-const config = getDefaultConfig({
+export const config = getDefaultConfig({
   appName: 'LynkX',
   projectId: 'YOUR_PROJECT_ID',
   chains: [mainnet, polygon, optimism, arbitrum, base],
@@ -34,7 +34,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider chains={config.chains}>
+        <RainbowKitProvider >
           <App />
         </RainbowKitProvider>
       </QueryClientProvider>

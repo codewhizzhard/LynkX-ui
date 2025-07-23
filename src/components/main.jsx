@@ -27,7 +27,7 @@ const MainBody = () => {
     const throttleCopy = UseThrottleFunction(handleCopy, 1000);
 
   return (
-    <div className='pt-7 w-full overflow-hidden'>
+    <div className='pt-7 w-full'>
         <header className='flex justify-between w-full text-[#B0B0B0] items-center'>
             <h2 className=' italic text-[19px] font-semibold'>WELCOME!</h2>
             <div className='flex gap-2 items-center'>

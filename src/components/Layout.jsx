@@ -7,7 +7,8 @@ import MainBody from './main'
 const Layout = () => {
   return (
 
-    <div className='flex gap-6 px-10 py-5 h-[100vh] bg-[#292C31]'>
+    <div className='flex gap-6 px-10 py-5 h-[100vh] bg-[#292C31] overflow-hidden'>
+
       <Nav />
       <MainBody />
     </div>

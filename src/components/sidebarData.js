@@ -2,7 +2,7 @@ const sidebarData = {
     "merchant": [
     {
         name: "Dashboard",
-        to: ""
+        to: "/"
     }, {
         name: "Receive Funds",
         to: "/receive"

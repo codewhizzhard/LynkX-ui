@@ -6,10 +6,12 @@ import { useReadContract } from 'wagmi'
 import { useAccount } from 'wagmi'
 import { useWriteContract } from 'wagmi';
 import { watchContractEvent } from 'wagmi/actions';
+import { config } from '../../main'
 
 
 
 const Dashboard = () => {
+  console.log("myChains:", config.chains.map((chain) => chain))
 
   const {address, isConnected} = useAccount();
 
@@ -51,13 +53,17 @@ const Dashboard = () => {
   })
 
   return (
-
+    /*  <p onClick={handleCreateVault}>create</p> */
 
     <section className='flex flex-col gap-3 text-[#D9D9D9] overflow-y-hidden'>
-      <p onClick={handleCreateVault}>create</p>
+      <div className='w-full flex justify-end'>
+        <button type='button' className='bg-[#B0B0B0] rounded-[7px] text-[#292C31] py-1 px-4 cursor-pointer w-fit' onClick={() => setModal(true)}>Create Vault</button>
+        
+      </div> 
+     {/*  <p onClick={handleCreateVault}>create</p>
       <div className='border-dashed border-2 border-[#585858] py-2 px-2 justify-center text-[18px] italic flex'>
-        <button type='button' className='bg-[#B0B0B0] rounded-[7px] text-[#292C31] p-2 px-4 cursor-pointer' onClick={() => setModal(true)}>Create Vault</button>
-      </div>
+        
+      </div> */}
       <div className='flex gap-4  w-full flex-wrap'>
         { vaults.map((vault, index) => (
           <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] justify-center' key={index}>
@@ -85,47 +91,47 @@ const Dashboard = () => {
         <p className='text-[#B0B0B0] rounded-[7px] px-4' >Vault History</p>
         </div>
 
-        <div className='flex bg-[#202225] w-full pt-1 px-3'>
+        <div className='flex bg-[#202225] w-full px-3 py-2'>
         <span className='flex-1/4'>vaultName</span>
         <span className='flex-1/4'>hh hhhsyys gtddt</span>
         <span className='flex-1/4'>hhh hhsyys</span>
         <span className='flex-1/4 '>hh</span>
       </div>
 
-        <div className='bg-red-400 overflow-y-auto h-27 py-2 scroll-invisible'  >
+        <div className='bg-[#292C31] overflow-y-auto h-34  scroll-invisible'   >
 
         
-      <div className='flex px-3'>
+      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
         <span className='flex-1/4'>hh</span>
         <span className='flex-1/4'>hh hhhsyys gtddt</span>
         <span className='flex-1/4'>hhhhhsyys gtddt</span>
         <span className='flex-1/4'>hh</span>
       </div>
-      <div className='flex px-3'>
+      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
         <span className='flex-1/4'>hh</span>
         <span className='flex-1/4'>hh hhhsyys gtddt</span>
         <span className='flex-1/4'>hhhhhsyys gtddt</span>
         <span className='flex-1/4'>hh</span>
       </div>
-      <div className='flex px-3'>
+      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
         <span className='flex-1/4'>hh</span>
         <span className='flex-1/4'>hh hhhsyys gtddt</span>
         <span className='flex-1/4'>hhhhhsyys gtddt</span>
         <span className='flex-1/4'>hh</span>
       </div>
-      <div className='flex px-3'>
+      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
         <span className='flex-1/4'>hh</span>
         <span className='flex-1/4'>hh hhhsyys gtddt</span>
         <span className='flex-1/4'>hhhhhsyys gtddt</span>
         <span className='flex-1/4'>hh</span>
       </div>
-      <div className='flex px-3'>
+      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
         <span className='flex-1/4'>hh</span>
         <span className='flex-1/4'>hh hhhsyys gtddt</span>
         <span className='flex-1/4'>hhhhhsyys gtddt</span>
         <span className='flex-1/4'>hh</span>
       </div>
-      <div className='flex px-3'>
+      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
         <span className='flex-1/4'>hh</span>
         <span className='flex-1/4'>hh hhhsyys gtddt</span>
         <span className='flex-1/4'>hhhhhsyys gtddt</span>
@@ -150,10 +156,13 @@ const Dashboard = () => {
         <div className='flex flex-col'>
           <label for="chain" className="block mb-2 text-sm font-medium text-gray-200">Select Chain</label>
           <select id="chain" className="bg-gray-800 border border-gray-600 text-white text-sm rounded-lg focus:ring-[#009FBD] focus:border-[#009FBD] block p-3 mb-10">
-          <option>Merchant</option>
-          <option>Liquidity Provider</option>
+            { config.chains.map((chain, index) => (
+              <option value={chain.name}>{chain.name}</option>
+            ))}
+{/*           <option>Ethereum</option>
+          <option>Liquidity Provider</option>s
           <option>Treasury Manager</option>
-        </select>
+ */}        </select>
         </div>
         <div className='flex justify-between'>
           <button type='button' className='py-3 px-6 rounded-[7px] bg-red-500/60 cursor-pointer' onClick={() => setModal(false)}>Cancel</button>

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const lynkXData = axios.create({
-    baseURL: "http://localhost:5003/api/user/",
+    baseURL: "https://lynkx-data.onrender.com",
     headers: {
         "content-type": "application/json",
     }
