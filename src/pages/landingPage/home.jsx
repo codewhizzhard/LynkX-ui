@@ -29,7 +29,7 @@ const Home = () => {
         localStorage.setItem("token", post.data.data.userToken);
         console.log("lynkData:", post);
         alert("Wallet connected successfully!");
-        navigate("/merchant");
+        navigate("/merchant/");
     } catch (error) {
       console.error('Wallet connection failed:', error);}
     }

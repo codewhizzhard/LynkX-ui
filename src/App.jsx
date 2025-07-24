@@ -12,6 +12,7 @@ import About from "./pages/landingPage/about";
 import Role from "./pages/landingPage/role";
 import ProtectedRoutes from "./components/protected";
 import History from "./pages/merchant/history";
+import Settings from "./pages/merchant/settings";
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <Route path="receive" element={<Receive />} />
         <Route path="withdraw" element={<Withdraw />} />
         <Route path="history" element={<History />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="*" element={<Missing />} />
         </Route>
         </Route>
