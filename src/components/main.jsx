@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 import profile from "../assets/pages/userImage.png";
 import { FiCheck, FiCopy } from 'react-icons/fi';
 import UseThrottleFunction from '../hooks/useThrottleFunction';
+import lynkXData from '../service/axios';
 
 const MainBody = () => {
 
@@ -26,11 +27,35 @@ const MainBody = () => {
     }
     const throttleCopy = UseThrottleFunction(handleCopy, 1000);
 
-    let username = localStorage.getItem("userData");
-    useEffect(() => {
+    const username = localStorage.getItem("userData");
+    
+
+    /* useEffect(() => {
         username = localStorage.getItem("userData");
-    }, [username])
+    }, []) */
     //console.log("dddata:", username)
+
+    const getUserDetails = async () => {
+        
+        try {
+            
+            const res = await lynkXData.get(`/getUserDetails/${address}`);
+
+            console.log("details:", res)
+        } catch (err) {
+            console.log("err:", err)
+        }
+        
+      
+    }
+   // getUserDetails()
+    useEffect(() => {
+        if (address) {
+        getUserDetails()
+        console.log("err:")
+        }
+        
+    }, [])
 
   return (
     <div className='pt-7 w-full'>
@@ -38,7 +63,7 @@ const MainBody = () => {
             <h2 className=' italic text-[19px] font-semibold'>WELCOME!</h2>
             <div className='flex gap-2 items-center'>
                 <span className='flex flex-col items-end gap-1'>
-                    <h3 className=' leading-none font-semibold text-[14px] '>{username}</h3>
+                    <h3 className=' leading-none font-semibold text-[14px] '>{username ? username : "User"}</h3>
                     <p className=' leading-none italic text-[14px] flex gap-1 cursor-pointer hover:underline' onClick={() => throttleCopy(address)} > <span>{copied ? <FiCheck className=''  /> : <FiCopy className=''  />} </span>{isConnected ? address : "Not connected"} </p>
                 </span>
                 <div className='w-[57px] h-[57px] rounded-[100%] border-2 border-dashed'><img src={profile} alt="" /></div>

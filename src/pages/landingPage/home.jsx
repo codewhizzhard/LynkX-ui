@@ -22,12 +22,12 @@ const Home = () => {
     try {
         const message = `Welcome to LynkX, please sign this message to connect your wallet: ${address}\nTime: ${Date.now()}`;
         const signature = await signMessageAsync({message});
-        console.log("signature:", signature);
+        //console.log("signature:", signature);
         const post = await lynkXData.post("/auth", {
             message, address, signature
         })
-        localStorage.setItem("token", post.data.data.userToken);
-        console.log("lynkData:", post);
+        localStorage.setItem("token", post.data.data.token);
+        //console.log("lynkData:", post.data.data.token);
         alert("Wallet connected successfully!");
         navigate("/merchant/");
     } catch (error) {
