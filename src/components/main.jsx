@@ -26,37 +26,32 @@ const MainBody = () => {
         } 
     }
     const throttleCopy = UseThrottleFunction(handleCopy, 1000);
-
-    const username = localStorage.getItem("userData");
-    
-
-    /* useEffect(() => {
-        username = localStorage.getItem("userData");
-    }, []) */
-    //console.log("dddata:", username)
-
     const getUserDetails = async () => {
         
         try {
             
             const res = await lynkXData.get(`/getUserDetails/${address}`);
-
-            console.log("details:", res)
+            //console.log("details:", res?.data?.data)
+            localStorage.setItem("userDetails", JSON.stringify(res?.data?.data));
         } catch (err) {
             console.log("err:", err)
-        }
-        
+        }   
       
     }
-   // getUserDetails()
     useEffect(() => {
         if (address) {
         getUserDetails()
-        console.log("err:")
         }
-        
-    }, [])
+    }, [address])
 
+    const userdetails = localStorage.getItem("userDetails");
+    let user;
+    if(userdetails) {
+         user = JSON.parse(userdetails);
+         
+    }
+    const username = user?.username
+    
   return (
     <div className='pt-7 w-full'>
         <header className='flex justify-between w-full text-[#B0B0B0] items-center'>
