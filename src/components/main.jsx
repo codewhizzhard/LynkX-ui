@@ -11,6 +11,8 @@ const MainBody = () => {
     const {address, isConnected} = useAccount();
     
     const [copied, setCopied] = useState(false)
+
+    let username = "User";
     
     const handleCopy = async (text) => {
         try {
@@ -33,6 +35,7 @@ const MainBody = () => {
             const res = await lynkXData.get(`/getUserDetails/${address}`);
             //console.log("details:", res?.data?.data)
             localStorage.setItem("userDetails", JSON.stringify(res?.data?.data));
+            username = res?.data?.data?.username
         } catch (err) {
             console.log("err:", err)
         }   
@@ -48,9 +51,9 @@ const MainBody = () => {
     let user;
     if(userdetails) {
          user = JSON.parse(userdetails);
-         
     }
-    const username = user?.username
+
+     username = user?.username
     
   return (
     <div className='pt-7 w-full'>

@@ -21,12 +21,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-export const config = getDefaultConfig({
-  appName: 'LynkX',
-  projectId: 'YOUR_PROJECT_ID',
-  chains: [mainnet, polygon, optimism, arbitrum, base],
-  ssr: true, // If your dApp uses server side rendering (SSR)
-});
+import { config } from './wagmiConfig.js';
 
 const queryClient = new QueryClient();
 

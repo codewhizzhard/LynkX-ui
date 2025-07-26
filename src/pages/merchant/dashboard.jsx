@@ -6,16 +6,20 @@ import { useReadContract } from 'wagmi'
 import { useAccount } from 'wagmi'
 import { useWriteContract } from 'wagmi';
 import { watchContractEvent } from 'wagmi/actions';
-import { config } from '../../main'
+import { config } from '../../wagmiConfig'
+import lynkXData from '../../service/axios'
+import DashboardModal from './dashboardModal'
 
 
 
 const Dashboard = () => {
-  console.log("myChains:", config.chains.map((chain) => chain))
+  //console.log("myChains:", config.chains.map((chain) => chain))
 
   const {address, isConnected} = useAccount();
 
   const [modal, setModal] = useState(false);
+  const [wallets, setWallets] = useState([]);
+  const [balances, setBalances] = useState({});
 
   const vaults = [ {vaultName: "name", vaultAmount: "20000"}, {vaultName: "name", vaultAmount: "20000"},]
 
@@ -29,6 +33,42 @@ const Dashboard = () => {
     });
   };
  // or viem if not using wagmi
+  const getAllUserWallet = async () => {
+    if (!address) return; // avoid calling API without address
+    try {
+      console.log("Fetching wallets for:", address);
+      const res = await lynkXData.get(`/getUserAddresses/${address}`);
+      console.log("Wallets:", res.data?.wallets); // <- use res.data
+      if (res.data?.wallets) {
+        setWallets(res.data?.wallets);
+      }
+      
+    } catch (err) {
+      console.error("Error fetching wallets:", err);
+    }
+  };
+
+
+  useEffect(() => {
+    if (!wallets) return 
+    const getWalletBalance = async() => {
+        for (const w of wallets) {
+        const res = await lynkXData.get(`/get-wallet-address/${w.id}`)
+        console.log("balance:", res?.data?.walletBalance)
+        balances[w.id] = res?.data?.walletBalance ?? 0
+    }
+    setBalances(balances);
+    }
+   const interval = setInterval(getWalletBalance, 600000);
+   return () => clearInterval(interval);
+  }, [wallets])
+
+
+  useEffect(() => {
+    if (isConnected && address) {
+      getAllUserWallet();
+    }
+  }, [isConnected, address]); // <- add dependencies
 
 
 /* useEffect(() => {
@@ -52,6 +92,8 @@ const Dashboard = () => {
     args: [address]
   })
 
+ 
+
   return (
     /*  <p onClick={handleCreateVault}>create</p> */
 
@@ -65,14 +107,17 @@ const Dashboard = () => {
         
       </div> */}
       <div className='flex gap-4  w-full flex-wrap'>
-        { vaults.map((vault, index) => (
+        {Array.isArray(wallets) && wallets.length > 0 && wallets.map((wallet, index) => (
           <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] justify-center' key={index}>
-            <span>Vault Name:{vault.vaultName}</span>
-            <span>{vault.vaultAmount}</span>
-            <div className='flex '>
+            <span className='flex gap-4'>Wallet Name: <span>{wallet?.walletName?.toUpperCase()}</span></span>
+            <span className='flex gap-4'>Wallet Name: <span>{wallet?.blockchain?.toUpperCase()}</span></span>
+            <span className='truncate max-w-[290px]'>{wallet?.address}</span>
+            <span className='flex gap-4'>Wallet balance: <span>{!balances[wallet?.id] && "0" }</span></span>
+            
+            {/* <div className='flex '>
               <button>Withraw</button>
               <button>gg:{factoryData}</button>
-            </div>
+            </div> */}
           </li>
         ))
 
@@ -146,35 +191,7 @@ const Dashboard = () => {
 
 
       {/* pop up */}
-      {modal &&
-      <div className='fixed top-0 w-full bg-black/90 left-0 right-0 h-full flex justify-center items-center flex-col '>
-      <div className='w-[50%] bg-[#009FBD]/50 flex flex-col gap-4 px-10 rounded-[30px] h-[60%] justify-center'>
-          <div className='flex flex-col gap-3'>
-          <label htmlFor="">Vault Name</label>
-          <input type="text" placeholder='#name' className='p-2 bg-[#D9D9D9] outline-none rounded-[7px] text-black'/>
-        </div>
-        <div className='flex flex-col'>
-          <label for="chain" className="block mb-2 text-sm font-medium text-gray-200">Select Chain</label>
-          <select id="chain" className="bg-gray-800 border border-gray-600 text-white text-sm rounded-lg focus:ring-[#009FBD] focus:border-[#009FBD] block p-3 mb-10">
-            { config.chains.map((chain, index) => (
-              <option value={chain.name}>{chain.name}</option>
-            ))}
-{/*           <option>Ethereum</option>
-          <option>Liquidity Provider</option>s
-          <option>Treasury Manager</option>
- */}        </select>
-        </div>
-        <div className='flex justify-between'>
-          <button type='button' className='py-3 px-6 rounded-[7px] bg-red-500/60 cursor-pointer' onClick={() => setModal(false)}>Cancel</button>
-          <button type='button' className='py-3 px-6 rounded-[7px] bg-green-400/60 cursor-pointer'>Create</button>
-        </div>
-        
-
-      </div>
-      
-
-      </div>
-      }
+      <DashboardModal modal={modal} setModal={setModal} address={address}/>
     </section>
     
   )

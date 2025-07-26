@@ -27,7 +27,7 @@ const Home = () => {
             message, address, signature
         })
         localStorage.setItem("token", post.data.data.token);
-        //console.log("lynkData:", post.data.data.token);
+        console.log("lynkData:", post.data.data);
         alert("Wallet connected successfully!");
         navigate("/merchant/");
     } catch (error) {

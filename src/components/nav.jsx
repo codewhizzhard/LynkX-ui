@@ -30,7 +30,7 @@ const Nav = () => {
             <div className='flex flex-col justify-between h-[85%]'>
               <ul className='flex flex-col text-white text-[16px] italic font-semibold gap-3 pt-14 '>
               {sidebarData[userType].map((data, index) => (
-                <Link to={`/${userType}${data.to}`}> <li key={index} className={`cursor-pointer py-3 px-2 rounded-[5px] ${data.to.slice(1) === page ? "bg-[#009FBD] " : ""}`} onClick={() => setPage(data.to.slice(1))}>{data.name}</li></Link>
+                <Link to={`/${userType}${data.to}`} key={index}> <li key={index} className={`cursor-pointer py-3 px-2 rounded-[5px] ${data.to.slice(1) === page ? "bg-[#009FBD] " : ""}`} onClick={() => setPage(data.to.slice(1))}>{data.name}</li></Link>
               ))}
             </ul>
             <div className='text-red-500/70 text-[16px] italic font-semibold cursor-pointer'>Logout</div>
