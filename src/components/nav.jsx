@@ -7,11 +7,12 @@ const Nav = () => {
 
   const locate = useLocation();
   console.log("loca:", locate.pathname.split("/")[2])
+   const [page, setPage] = useState(locate.pathname.split("/")[2]);
+  useEffect(() => {
+   setPage(locate.pathname.split("/")[2])
+  }, [locate.pathname])
 
-  const [page, setPage] = useState(locate.pathname.split("/")[2]);
   
-   
-
   //console.log("page:", locate.pathname.split("/")[2])
   //console.log("userss:", locate.pathname.split("/")[2][0].toUpperCase() + locate.pathname.split("/")[2].slice(1))
   const { userType } = useParams();

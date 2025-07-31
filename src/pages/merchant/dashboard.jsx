@@ -114,12 +114,10 @@ const Dashboard = () => {
             <span className='flex gap-4'>Wallet Name: <span>{wallet?.walletName?.toUpperCase()}</span></span>
             <span className='flex gap-4'>Wallet Name: <span>{wallet?.blockchain?.toUpperCase()}</span></span>
             <span className=' max-w-[290px] truncate'>{wallet?.address}</span>
-            <span className='flex gap-4'>Wallet balance: {balances[wallet.id]?.map((balance, index) => (
+           {/*  <span className='flex gap-4'>Wallet balance: {balances[wallet.id]?.map((balance, index) => (
               <span key={index}>{balance?.amount ? balance.amount : 0}</span>
             ))}
-            {/* {balances[wallet?.id]?.length === 0 ? "0" : balances[wallet?.id]?.map((balance, index) => (
-              <span key={index}>{balance?.amount ? balance?.amount : "0"}</span>
-            ))}</ */}</span>
+            </span> */}
             
             {/* <div className='flex '>
               <button>Withraw</button>
