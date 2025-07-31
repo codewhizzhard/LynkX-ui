@@ -14,6 +14,7 @@ const Settings = () => {
       const [wallets, setWallets] = useState([]);
       const [editVaultName, setEditVaultName] = useState({});
       const [showEdit, setShowEdit] = useState({});
+      const [vaultName, setVaultName] = useState("");
 
       const getAllUserWallet = async () => {
         if (!address) return; // avoid calling API without address
@@ -87,9 +88,21 @@ const Settings = () => {
         );
     };
 
-    const handleSaveVaultName = (i) => {
-        setShowEdit((prev) => ({...prev, [i]: true}))
-        setEditVaultName((prev) => ({...prev, [i]: false}))
+    const handleSaveVaultName = async(i, vaultAddress) => {
+        console.log("valunam:", vaultName)
+        console.log("valunam:", vaultAddress)
+        console.log("valunam:", address)
+        try {
+            const res = await lynkXData.post("/change-vaultName", {address, vaultName, vaultAddress });
+            console.log("nnn:", res)
+            if (res.status === 200) {
+            setShowEdit((prev) => ({...prev, [i]: true}))
+            setEditVaultName((prev) => ({...prev, [i]: false}))
+            }
+
+        } catch (err) {
+            console.log("err:", err);
+        }
     }
     
     
@@ -129,8 +142,8 @@ const Settings = () => {
                 <span>{wallet.address}</span> 
 
                 {showEdit[index] && <span className=' bg-purple-500/80 p-2 px-8 rounded-[11px] cursor-pointer' onClick={() => handleChangeVaultName(index)}>Edit vault name</span>}
-                {editVaultName[index] === true &&<input type="text" placeholder='change vaultName' className='w-[50%] bg-[#B0B0B0] p-2 rounded-[7px] outline-none text-black'/>}
-                {editVaultName[index] === true && <span className='bg-blue-600/50 py-2 px-10 cursor-pointer rounded-[11px]' onClick={() => handleSaveVaultName(index)}>Save</span>}
+                {editVaultName[index] === true &&<input type="text" placeholder='change vaultName' className='w-[50%] bg-[#B0B0B0] p-2 rounded-[7px] outline-none text-black' value={vaultName} onChange={(e) => setVaultName(e.target.value)}/>}
+                {editVaultName[index] === true && <span className='bg-blue-600/50 py-2 px-10 cursor-pointer rounded-[11px]' onClick={() => handleSaveVaultName(index, wallet.address)}>Save</span>}
             </li>
         ))}
     </ul>
