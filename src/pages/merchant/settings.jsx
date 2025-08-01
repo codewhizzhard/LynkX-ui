@@ -15,6 +15,7 @@ const Settings = () => {
       const [editVaultName, setEditVaultName] = useState({});
       const [showEdit, setShowEdit] = useState({});
       const [vaultName, setVaultName] = useState("");
+      const [reload, setReload] = useState(false)
 
       const getAllUserWallet = async () => {
         if (!address) return; // avoid calling API without address
@@ -22,7 +23,7 @@ const Settings = () => {
           console.log("Fetching wallets for:", address);
           const res = await lynkXData.get(`/getUserAddresses/${address}`);
           console.log("Wallets:", res.data?.wallets); // <- use res.data
-          if (res.data?.wallets) {
+          if (res?.status === 200) {
             setWallets(res.data?.wallets);
             setShowEdit(
             res.data.wallets.reduce((acc, _, i) => {
@@ -31,6 +32,8 @@ const Settings = () => {
             }, {})
             );
             console.log("settings:", res.data?.wallets)
+            return res?.data?.wallets
+            //console.log("settings:", res.data?.wallets)
           }
           
         } catch (err) {
@@ -42,7 +45,7 @@ const Settings = () => {
         if (isConnected && address) {
             getAllUserWallet();
         }
-        }, [isConnected, address]);
+        }, [isConnected, address, reload]);
 
     const [state, setState] = useState({profile: true, wallet: false});
     const handleChangePage = (key) => {
@@ -89,21 +92,28 @@ const Settings = () => {
     };
 
     const handleSaveVaultName = async(i, vaultAddress) => {
-        console.log("valunam:", vaultName)
-        console.log("valunam:", vaultAddress)
-        console.log("valunam:", address)
         try {
             const res = await lynkXData.post("/change-vaultName", {address, vaultName, vaultAddress });
-            console.log("nnn:", res)
-            if (res.status === 200) {
-            setShowEdit((prev) => ({...prev, [i]: true}))
-            setEditVaultName((prev) => ({...prev, [i]: false}))
-            }
+            if (res?.status === 200) {
+            setVaultName("")
+            const getWallets = await getAllUserWallet()
+            console.log("wwhh:", getWallets)
+            if (getWallets.length > 0) {
+                alert(res.data.message);
+                setEditVaultName((prev) => ({...prev, [i]: false}))
 
+            }
+           
+            /* setShowEdit((prev) => ({...prev, [i]: true}))
+            setEditVaultName((prev) => ({...prev, [i]: false})) */
+            
+            }
         } catch (err) {
             console.log("err:", err);
         }
     }
+
+
     
     
   return (
@@ -143,7 +153,7 @@ const Settings = () => {
 
                 {showEdit[index] && <span className=' bg-purple-500/80 p-2 px-8 rounded-[11px] cursor-pointer' onClick={() => handleChangeVaultName(index)}>Edit vault name</span>}
                 {editVaultName[index] === true &&<input type="text" placeholder='change vaultName' className='w-[50%] bg-[#B0B0B0] p-2 rounded-[7px] outline-none text-black' value={vaultName} onChange={(e) => setVaultName(e.target.value)}/>}
-                {editVaultName[index] === true && <span className='bg-blue-600/50 py-2 px-10 cursor-pointer rounded-[11px]' onClick={() => handleSaveVaultName(index, wallet.address)}>Save</span>}
+                {editVaultName[index] === true && <div className='flex justify-between w-[50%]'><span className='bg-red-500/60 px-8 py-2 rounded-[11px] cursor-pointer' onClick={() => {setShowEdit((prev) => ({...prev, [index]: true})); setEditVaultName((prev) => ({...prev, [index]: false}))}}>Cancel</span> <span className='bg-blue-600/50 py-2 px-10 cursor-pointer rounded-[11px]' onClick={() => handleSaveVaultName(index, wallet.address)}>Save</span></div>}
             </li>
         ))}
     </ul>

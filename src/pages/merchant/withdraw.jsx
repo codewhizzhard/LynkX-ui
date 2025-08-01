@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { FiArrowDown, FiArrowUp, FiDollarSign } from 'react-icons/fi';
 import { useAccount } from 'wagmi'
 import lynkXData from '../../service/axios';
+import {z} from "zod";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { setBalance } from 'viem/actions';
 
 
 const Withdraw = () => {
@@ -10,21 +14,50 @@ const Withdraw = () => {
     const [wallets, setWallets] = useState([]);
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState(null);
+    const [chains, setChains] = useState([]);
+    const [selectedChain, setSelectedChain] = useState("");
+    const [openChainSelection, setOpenChainSelection] = useState(false);
 
     const to = isConnected && address;
     const [option, setOption] = useState("send")
+    const transferSchema = z.object({
+        address: z
+            .string()
+            .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid address"),
+        amount: z.string().min(1, "Amount is required"),
+        chain: z.string().min(1, "required")
+    });
+
+     const {register, handleSubmit, setValue, formState: {isSubmitting, errors}} = useForm({
+            resolver: zodResolver(transferSchema)
+        })
+        const handleSelect = async(option) => {
+            console.log("op:", option)
+            setSelected(option)
+            setOpen(false) 
+            const response = await lynkXData.get(`/get-wallet-address/${option.id}`)
+            console.log("respos:", response)
+            if (response.status === 200) {
+            setChains(response.data.walletBalance)
+            console.log("balance:", response.data.walletBalance)
+
+            }
+           /*  balances[w.id] = response?.data?.walletBalance ?? 0
+            
+            setBalances(balances); */
+        }
 
      const getAllUserWallet = async () => {
         if (!address) return; // avoid calling API without address
         try {
           console.log("Fetching wallets for:", address);
           const res = await lynkXData.get(`/getUserAddresses/${address}`);
-          const wallet = res
-          console.log("res:", wallet)
+          //const wallet = res
+          //console.log("res:", res.data.wallets[0])
           if (res?.status === 200) {
             setWallets(res?.data?.wallets);
             setSelected(res?.data?.wallets[0]);
-            console.log("Wallets:", res?.data?.wallets); 
+            handleSelect(res.data.wallets[0])
           }
           
         } catch (err) {
@@ -38,9 +71,27 @@ const Withdraw = () => {
           }
         }, [isConnected, address]); 
         // <- add dependencies
-        const handleSelect = (option) => {
-            setSelected(option)
-            setOpen(false)
+        
+
+        const handleTransfer = async (data) => {
+            console.log(data)
+            
+           try {
+                const tokens = await lynkXData.get(`/get-wallet-address/${selected.id}`)
+                if (tokens.status === 200) {
+                    const token = tokens.data?.walletBalance.find((tk) => tk.token.symbol === data.chain)
+                    console.log(typeof data.amount, data.address, token.token.id, selected.id, selected.blockchain)
+                    const res = await lynkXData.post("/send-transaction", {amount: data.amount, destinationAddress: data.address, tokenId: token.token.id , walletId: selected.id, blockchain: selected.blockchain})
+                    alert(`Transaction ${res?.data?.data?.state}`)
+                } 
+                
+            } catch (err) {
+                console.log("err:", err)
+            }
+        }
+
+         const handlePickchain = (data) => {
+           setValue("chain", data)
         }
 
     return (
@@ -49,20 +100,22 @@ const Withdraw = () => {
             Send to other address, or withraw to connected address
         </span>
         <div className='flex-grow h-[75vh] pt-3 flex justify-center'>
-            <form className='w-[80%] h-[90%] bg-[#202225] rounded-[30px] p-2 text-[#292C31] flex items-center  flex-col gap-6'>
-                <div className='w-[40%] bg-[#292C31] rounded-[10px] flex justify-between cursor-pointer mt-3'>
-                    <span className={`rounded-[7px] text-[16px] font-semibold text-white  px-8 py-2 ${option === "send" ? "bg-[#009FBD]" : ""}`} onClick={() => setOption("send")}>Send</span>
-                    <span className={`rounded-[7px] text-[16px] font-semibold text-white  px-8 py-2 ${option === "withdraw" ? "bg-[#009FBD]" : ""}`} onClick={() => setOption("withdraw")}>Withdraw</span>
+            <form className='w-[80%] h-[90%] bg-[#202225] rounded-[30px] p-2 text-[#292C31] flex items-center  flex-col gap-2' onSubmit={handleSubmit(handleTransfer)}>
+                <div className='w-[40%] bg-[#292C31] rounded-[10px] flex justify-center cursor-pointer mt-1'>
+                    <span className={`rounded-[7px] text-[16px] font-semibold text-white  px-10 py-2 bg-[#009FBD]`} >Send</span>
+                    {/* <span className={`rounded-[7px] text-[16px] font-semibold text-white  px-8 py-2 ${option === "withdraw" ? "bg-[#009FBD]" : ""}`} onClick={() => setOption("withdraw")}>Withdraw</span> */}
                 </div>
-                {option === "send" && !selected && <p className='text-white text-2xl p-4 '>Loading wallets data...</p>}
+                {!selected && <p className='text-white text-2xl p-4 '>Loading wallets data...</p>}
                 {
-                    option === "send" && selected && (
-                        <div className='w-[60%] flex flex-col gap-8'>
-                            <div className='flex flex-col gap-2'>
+                     selected && (
+                        
+                        <div className='w-[60%] flex flex-col gap-2'>
+                            <div className='flex gap-2 items-center'>
+                                <div className='flex flex-col gap-2'>
                                 <span className='text-[#B0B0B0] font-semibold text-[16px]'>From</span>
                                 <div className="relative w-full">
                             {/* Selected wallet */}
-                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-2 px-3 cursor-pointer border border-[#009FBD] items-center' onClick={() => setOpen(!open)}>
+                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-2 px-3 cursor-pointer border border-[#009FBD] items-center gap-2' onClick={() => setOpen(!open)}>
                                 <div
                                 
                                 className=" flex flex-col gap-1"
@@ -97,17 +150,45 @@ const Withdraw = () => {
                                 </div>
                             )}
                             </div>
-                                
-                                </div>
+                            
+                            </div>
+                            <div className='flex flex-col relative h-full items-start'>
+                                <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0 h-[3vh] mb-4'>{errors?.chain && errors.chain?.message}</p>
+                                <button  className='text-[#B0B0B0] flex justify-between items-center border border-[#009FBD] w-[10vw] cursor-pointer text-center px-1' type='button' onClick={() => setOpenChainSelection((prev) => !prev)}>{selectedChain ? selectedChain : "Pick chain" }<FiArrowDown /></button>
+                                {chains.length > 0 && openChainSelection && (<ul className='flex flex-col gap-1 absolute top-15 w-full z-50 cursor-pointer' >{chains.map((chain, index) => (
+                                    <li className=' pl-1 bg-[#B0B0B0] z-50' key={index} onClick={() => {handlePickchain(chain.token.symbol); setOpenChainSelection((prev) => !prev); setSelectedChain(chain.token.symbol)}}>{chain.token.symbol.toUpperCase()}</li>
+                                ) )} </ul>)}
+                            </div>
+                            
+
+
+
+                              {/* <div>
+                                <p className='text-[#B0B0B0] flex gap-1 items-center border border-[#009FBD] w-[8vw]' onClick={setOpenChainSelection((prev) => !prev)}>Pick chain <FiArrowDown /></p>
+                                {chains.length > 0 && openChainSelection && <span className='flex flex-col gap-2'>{ chains.map((chain, index) => <span className='bg-red-600 text-white' key={index}>{chain.token.symbol.toUpperCase()}</span>)}</span>}
+                            </div>   */}
+                        </div>
+                            
                             <div className='flex flex-col gap-2'>
                                 <span className='text-[#B0B0B0] font-semibold text-[16px]'>To</span>
-                                <input type="text" placeholder='place address here' className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD]'/>
+                                <input type="text" placeholder='place address here' className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD]' {...register("address")}/>
+                                {errors?.address && <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0'>{errors.address?.message}</p>} 
+                            </div>
+                            <div className='flex justify-between items-end h-[15vh]'>
+                                <div className='flex flex-col gap-2 w-[50%]'>
+                                    {/* <span className='text-[#B0B0B0] font-semibold text-[16px]'>Amount</span> */}
+                                     {errors?.amount && <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0'>{errors.amount?.message}</p>} 
+                                     <div>
+                                       
+                                        <input type="text" className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD]' placeholder='amount' {...register("amount")}/></div>
+                                </div>
+                                <button type='submit' className='w-[45%] bg-[#009FBD] h-[58%]  rounded-[11px]'>Confirm</button>
                             </div>
                         </div>
                     )
                 }
                 {
-                    option === "withdraw" && (
+                    /* option === "withdraw" && (
                         <div className='flex flex-col mt-4'>
                             <p className='text-[16px] italic text-[#009FBD] font-semibold'>How much usdc would you like to withdraw?</p>
                             <div className='bg-[#B0B0B0] text-[#292C31] font-semibold text-[16px] relative rounded-[7px] px-4 py-1 mt-8'>  
@@ -127,8 +208,9 @@ const Withdraw = () => {
                             </div>
                             
                         </div>
-                    )
+                    ) */
                 }
+                <button type='submit'>Confirm</button>
             </form>
         </div>
         </section>
