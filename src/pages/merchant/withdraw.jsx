@@ -35,6 +35,7 @@ const Withdraw = () => {
             console.log("op:", option)
             setSelected(option)
             setOpen(false) 
+            setSelectedChain("")
             const response = await lynkXData.get(`/get-wallet-address/${option.id}`)
             console.log("respos:", response)
             if (response.status === 200) {
@@ -154,8 +155,8 @@ const Withdraw = () => {
                             </div>
                             <div className='flex flex-col relative h-full items-start'>
                                 <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0 h-[3vh] mb-4'>{errors?.chain && errors.chain?.message}</p>
-                                <button  className='text-[#B0B0B0] flex justify-between items-center border border-[#009FBD] w-[10vw] cursor-pointer text-center px-1' type='button' onClick={() => setOpenChainSelection((prev) => !prev)}>{selectedChain ? selectedChain : "Pick chain" }<FiArrowDown /></button>
-                                {chains.length > 0 && openChainSelection && (<ul className='flex flex-col gap-1 absolute top-15 w-full z-50 cursor-pointer' >{chains.map((chain, index) => (
+                                <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center px-1' type='button' onClick={() => setOpenChainSelection((prev) => !prev)}>{selectedChain ? selectedChain : "Pick chain" }<FiArrowDown /></button>
+                                {chains.length > 0 && openChainSelection && (<ul className='flex flex-col gap-1 absolute top-17 w-full z-50 cursor-pointer' >{chains.map((chain, index) => (
                                     <li className=' pl-1 bg-[#B0B0B0] z-50' key={index} onClick={() => {handlePickchain(chain.token.symbol); setOpenChainSelection((prev) => !prev); setSelectedChain(chain.token.symbol)}}>{chain.token.symbol.toUpperCase()}</li>
                                 ) )} </ul>)}
                             </div>

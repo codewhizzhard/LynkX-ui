@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { FiArrowLeft, FiCheck, FiCopy } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import UseThrottleFunction from '../../hooks/useThrottleFunction';
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 
 const Receive = () => {
@@ -16,11 +19,17 @@ const Receive = () => {
 
     const userAddress = "0xcAb180b62D3cC891802E072aF06197F012ccE736";
 
-    const handleGenerate = () => {
-        setShowLink(true);
-    }
+    const receiveSchema = z.object({
+        productName: z.string().optional(),
+        orderId: z.string().optional(),
+        address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid address"),
+        amount: z.string().min(1, "Amount is required"),
+    })
 
-  
+    const {register, handleSubmit, setValue, formState: {isSubmitting, errors}} = useForm({
+                resolver: zodResolver(receiveSchema)
+            })
+
 
     const handleCopy = async (text) => {
         try {
@@ -36,6 +45,10 @@ const Receive = () => {
         } 
     }
     const throttleCopy = UseThrottleFunction(handleCopy, 1000);
+     const handleGenerate = (data) => {
+        setShowLink(true);
+        console.log("ee:", data)
+    }
   
   return (
     <section className=' flex flex-col text-[#B0B0B0]'>
@@ -43,15 +56,28 @@ const Receive = () => {
             Generate Link
         </span>
             <div className='flex-grow h-[75vh] pt-3 flex justify-center'>
-                <form className='w-[80%] h-[90%] bg-[#202225] rounded-[30px] p-2 text-[#292C31] flex items-center justify-center flex-col gap-10'>
-                    <div className='flex justify-center flex-col gap-8 items-center w-full'>
-                        <input type="text" className='bg-[#B0B0B0] w-[60%] py-2 rounded-[7px] px-3 outline-none' placeholder='#order id'/>
-                        <input type="text" className='bg-[#B0B0B0] w-[60%] py-2 rounded-[7px] px-3 outline-none' placeholder='#product name'/>
-                        <input type="text" className='bg-[#B0B0B0] w-[60%] py-2 rounded-[7px] px-3 outline-none' placeholder='#amount to receive'/>
+                <form className='w-[80%] h-[90%] bg-[#202225] rounded-[30px] p-2 pt-6 text-[#292C31] flex items-center flex-col gap-10' onSubmit={handleSubmit(handleGenerate)}>
+                    <div className='flex flex-col gap-4 items-center w-full'>
+                        <span className='flex flex-col w-full items-center'>
+                            <input type="text" className='bg-[#B0B0B0] w-[60%] py-2 rounded-[7px] px-3 outline-none' placeholder='#product name:optional' {...register("productName")}/>
+                            {errors?.productName && <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0'>{errors.productName?.message}</p>} 
+                        </span>
+                        <span className='flex flex-col w-full items-center'>
+                            <input type="text" className='bg-[#B0B0B0]  py-2 rounded-[7px] px-3 outline-none w-[60%]' placeholder='#order id:optional' {...register("orderId")}/>
+                            {errors?.orderId && <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0'>{errors.orderId?.message}</p>} 
+                        </span>
+                        <span className='flex flex-col w-full items-center'>
+                            <input type="text" className='bg-[#B0B0B0] w-[60%] py-2 rounded-[7px] px-3 outline-none' placeholder='#amount to receive:compulsory' {...register("amount")}/>
+                            {errors?.amount && <p className='text-red-500 text-[12px] w-[60%] flex justify-start mt-0'>{errors.amount?.message}</p>} 
+                        </span>
+                        <span className='flex flex-col w-full items-center'>
+                            <input type="text" className='bg-[#B0B0B0] w-[60%] py-2 rounded-[7px] px-3 outline-none' placeholder='#address you want to receive the money to:compulsory' {...register("address")}/>
+                            {errors?.address && <p className='text-red-500 text-[12px] w-[60%] flex justify-start mt-0'>{errors.address?.message}</p>} 
+                        </span>
                     </div>
                      <div className='flex justify-between w-[60%]'>
                         <button className='text-white bg-[#202225] py-3 px-8 rounded-[11px] text-[16px] font-semibold cursor-pointer border-2 border-[#009FBD] flex items-center gap-1' type='button' onClick={() => setShowLinkArea(false)}> <FiArrowLeft className='text-[20px]'/>Back</button>
-                        <button className='text-white bg-[#009FBD] py-3 px-10 rounded-[11px] text-[16px] font-semibold cursor-pointer ' type='button'onClick={handleGenerate}>Generate</button>
+                        <button className='text-white bg-[#009FBD] py-3 px-10 rounded-[11px] text-[16px] font-semibold cursor-pointer ' type='submit'onClick={handleGenerate}>Generate</button>
                     </div>
                 </form>
             </div>

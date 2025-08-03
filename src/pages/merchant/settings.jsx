@@ -136,24 +136,31 @@ const Settings = () => {
                  {errors?.about && <p className='text-red-500 text-[12px] w-[50%] flex justify-start'>{errors.about?.message}</p>} 
             </div>
             <div className='flex w-[50%] justify-between'>
-                <button type="submit" className='bg-[#009FBD] rounded-[7px] text-white py-3 px-8 text-center' >Save Changes</button>
+                <button type="submit" className='bg-[#009FBD] rounded-[7px] text-white py-3 px-8 text-center cursor-pointer' >Save Changes</button>
                 <button className='flex gap-1 items-center cursor-pointer pt-2' type='button' onClick={() => handleChangePage("wallet")}>Wallet <FiArrowRight className='pt-[3px]'/></button>
             </div>
             
         </form>
 }  
     {/* wallet setting page */}
+    {state.wallet && wallets.length === 0 && <p className='w-full text-center text-[17px]'>Loading...</p>}
     
     {state.wallet && wallets.length > 0 && <div className='bg-[#202225] rounded-[40px] p-3 h-[65vh]'>
     <ul  className=' flex flex-col w-full gap-4 h-[56vh] overflow-y-auto pb-2 items-center'>
         {wallets.map((wallet, index) => (
-            <li className='w-[70%] flex flex-col gap-2 items-center bg-[#009FBD]/25 p-4 rounded-[20px]' key={index}>
-                <span className='text-[20px] font-semibold text-blue-200/40'>{wallet.walletName.toUpperCase()}</span> 
-                <span>{wallet.address}</span> 
+            <li className='w-[70%] flex flex-col gap-3 bg-[#009FBD]/25 p-4 rounded-[20px]' key={index}>
+                <div className='flex w-full justify-between px-12'><span>NAME</span><span className='text-[20px] font-semibold text-blue-200/40'>{wallet.walletName.toUpperCase()}</span> </div>
+                <div className='flex w-full justify-between px-12'><span>BLOCKCHAIN</span><span className='text-[17px] font-semibold text-blue-200/40'>{wallet.blockchain}</span> </div>
+                <div className='flex w-full justify-between px-12'><span>STATE</span><span className='text-[17px] font-semibold text-blue-200/40'>{wallet.state}</span> </div>
+                 <div className='flex w-full justify-between px-12'><span>ADDRESS</span><span className='text-[17px] font-semibold text-blue-200/40'>{wallet.address}</span> </div>
 
-                {showEdit[index] && <span className=' bg-purple-500/80 p-2 px-8 rounded-[11px] cursor-pointer' onClick={() => handleChangeVaultName(index)}>Edit vault name</span>}
-                {editVaultName[index] === true &&<input type="text" placeholder='change vaultName' className='w-[50%] bg-[#B0B0B0] p-2 rounded-[7px] outline-none text-black' value={vaultName} onChange={(e) => setVaultName(e.target.value)}/>}
-                {editVaultName[index] === true && <div className='flex justify-between w-[50%]'><span className='bg-red-500/60 px-8 py-2 rounded-[11px] cursor-pointer' onClick={() => {setShowEdit((prev) => ({...prev, [index]: true})); setEditVaultName((prev) => ({...prev, [index]: false}))}}>Cancel</span> <span className='bg-blue-600/50 py-2 px-10 cursor-pointer rounded-[11px]' onClick={() => handleSaveVaultName(index, wallet.address)}>Save</span></div>}
+                {showEdit[index] && <span className=' bg-[#B0B0B0] py-2  rounded-[11px] cursor-pointer flex justify-center mx-12' onClick={() => handleChangeVaultName(index)}><p className='bg-blue-600/50 text-blue-100/40 p-2 px-8 rounded-[11px]'>Edit vault name</p> </span>}
+                {editVaultName[index] === true && <div className='w-full flex flex-col gap-2 justify-center items-center pt-3'>
+                    <input type="text" placeholder='change vaultName' className='w-[85%] bg-[#B0B0B0] p-3 rounded-[7px] outline-none text-black' value={vaultName} onChange={(e) => setVaultName(e.target.value)}/>
+                    <div className='flex justify-between w-[85%]'><span className='bg-red-500/60 px-8 py-2 rounded-[11px] cursor-pointer' onClick={() => {setShowEdit((prev) => ({...prev, [index]: true})); setEditVaultName((prev) => ({...prev, [index]: false}))}}>Cancel</span> <span className='bg-blue-600/50 py-2 px-10 cursor-pointer rounded-[11px]' onClick={() => handleSaveVaultName(index, wallet.address)}>Save</span></div>
+                    
+                    </div>}
+                
             </li>
         ))}
     </ul>

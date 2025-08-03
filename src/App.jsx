@@ -13,6 +13,7 @@ import Role from "./pages/landingPage/role";
 import ProtectedRoutes from "./components/protected";
 import History from "./pages/merchant/history";
 import Settings from "./pages/merchant/settings";
+import SendPayment from "./ReceivePayment/sendPayment";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
     <>
     <BrowserRouter>
       <Routes>
+        <Route path="/pay/:id" element={<SendPayment />} />
       {/*   <Route path="/" element={<ConnectWallet />} />
         <Route path={"/:userType"} element={<Layout />}>
         <Route index element={<DisplayDashboard />}/>
