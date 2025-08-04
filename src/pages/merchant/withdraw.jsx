@@ -51,10 +51,8 @@ const Withdraw = () => {
      const getAllUserWallet = async () => {
         if (!address) return; // avoid calling API without address
         try {
-          console.log("Fetching wallets for:", address);
+          //console.log("Fetching wallets for:", address);
           const res = await lynkXData.get(`/getUserAddresses/${address}`);
-          //const wallet = res
-          //console.log("res:", res.data.wallets[0])
           if (res?.status === 200) {
             setWallets(res?.data?.wallets);
             setSelected(res?.data?.wallets[0]);
@@ -110,11 +108,11 @@ const Withdraw = () => {
                 {
                      selected && (
                         
-                        <div className='w-[60%] flex flex-col gap-2'>
-                            <div className='flex gap-2 items-center'>
+                        <div className='w-[80%] flex flex-col gap-2'>
+                            <div className='flex justify-between items-center'>
                                 <div className='flex flex-col gap-2'>
                                 <span className='text-[#B0B0B0] font-semibold text-[16px]'>From</span>
-                                <div className="relative w-full">
+                                <div className="relative w-[34vw]">
                             {/* Selected wallet */}
                             <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-2 px-3 cursor-pointer border border-[#009FBD] items-center gap-2' onClick={() => setOpen(!open)}>
                                 <div
@@ -154,20 +152,13 @@ const Withdraw = () => {
                             
                             </div>
                             <div className='flex flex-col relative h-full items-start'>
-                                <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0 h-[3vh] mb-4'>{errors?.chain && errors.chain?.message}</p>
-                                <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center px-1' type='button' onClick={() => setOpenChainSelection((prev) => !prev)}>{selectedChain ? selectedChain : "Pick chain" }<FiArrowDown /></button>
-                                {chains.length > 0 && openChainSelection && (<ul className='flex flex-col gap-1 absolute top-17 w-full z-50 cursor-pointer' >{chains.map((chain, index) => (
+                                <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0 h-[3vh] mb-[14px]'>{errors?.chain && errors.chain?.message}</p>
+                                <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center pl-2 p-1' type='button' onClick={() => setOpenChainSelection((prev) => !prev)}>{selectedChain ? selectedChain.length > 13 ? `${selectedChain.slice(0, 13)}...` : selectedChain : "Pick chain" }<FiArrowDown /></button>
+                                {chains.length > 0 && openChainSelection && (<ul className='flex flex-col gap-1 absolute top-18 w-full z-50 cursor-pointer' >{chains.map((chain, index) => (
                                     <li className=' pl-1 bg-[#B0B0B0] z-50' key={index} onClick={() => {handlePickchain(chain.token.symbol); setOpenChainSelection((prev) => !prev); setSelectedChain(chain.token.symbol)}}>{chain.token.symbol.toUpperCase()}</li>
                                 ) )} </ul>)}
                             </div>
                             
-
-
-
-                              {/* <div>
-                                <p className='text-[#B0B0B0] flex gap-1 items-center border border-[#009FBD] w-[8vw]' onClick={setOpenChainSelection((prev) => !prev)}>Pick chain <FiArrowDown /></p>
-                                {chains.length > 0 && openChainSelection && <span className='flex flex-col gap-2'>{ chains.map((chain, index) => <span className='bg-red-600 text-white' key={index}>{chain.token.symbol.toUpperCase()}</span>)}</span>}
-                            </div>   */}
                         </div>
                             
                             <div className='flex flex-col gap-2'>

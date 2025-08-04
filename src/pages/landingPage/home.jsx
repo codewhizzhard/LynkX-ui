@@ -1,7 +1,7 @@
 import React from 'react'
 import stbObject from "../../assets/landingPage/stbObject.png";
 import { useAccount, useSignMessage } from 'wagmi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
 import lynkXData from '../../service/axios';
 

@@ -18,12 +18,6 @@ const MainRoute = () => {
 
     const navigate = useNavigate();
      const locate = useLocation();
-    
-    /* useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token && isConnected) navigate("/merchant");
-    }, [isConnected])
- */
    
   return (
     <div style={{backgroundImage: `url(${bg})`, backgroundSize: 'cover', fontFamily: 'ABeeZee, sans-serif' }} className='text-white min-h-[100vh]  px-12 py-6'>
