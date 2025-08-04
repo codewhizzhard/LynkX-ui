@@ -164,7 +164,7 @@ const Receive = () => {
                         {link && <p className=' leading-none italic text-[14px] flex gap-3 cursor-pointer hover:underline text-[#B0B0B0]' onClick={() => throttleCopy(link)} >{link} <span>{copied ? <FiCheck className=''  /> : <FiCopy className=''  />}</span> </p>}
                     </div>
                      <div className='flex justify-between w-[60%]'>
-                        <button className='text-white bg-[#202225] py-3 px-8 rounded-[11px] text-[16px] font-semibold cursor-pointer border-2 border-[#009FBD] flex items-center gap-1' type='button' onClick={() => reset()}> <FiArrowLeft className='text-[20px]'/>Clear</button>
+                        <button className='text-white bg-[#202225] py-3 px-8 rounded-[11px] text-[16px] font-semibold cursor-pointer border-2 border-[#009FBD] flex items-center gap-1' type='button' onClick={() => {reset(); setLink("")}}> <FiArrowLeft className='text-[20px]'/>Clear</button>
                         <button className='text-white bg-[#009FBD] py-3 px-10 rounded-[11px] text-[16px] font-semibold cursor-pointer ' type='submit'>Generate</button>
                     </div>
                 </form>
