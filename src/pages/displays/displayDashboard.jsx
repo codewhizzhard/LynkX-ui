@@ -7,7 +7,7 @@ const DisplayDashboard = () => {
     const {userType} = useParams();
     
     if (userType === "merchant") return (<Dashboard />)
-    if (userType === "liquidityProvider") return (<ProviderDashboard />)
+    if (userType === "liquidity-provider") return (<Dashboard />)
   
 }
 

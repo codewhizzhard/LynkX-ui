@@ -19,10 +19,12 @@ const Dashboard = () => {
   const [modal, setModal] = useState(false);
   const [wallets, setWallets] = useState([]);
   const [balances, setBalances] = useState({});
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [reLogin, setReLogin] = useState(false)
 
-  const vaults = [ {vaultName: "name", vaultAmount: "20000"}, {vaultName: "name", vaultAmount: "20000"},]
 
-    const { writeContract: writeFactory, isPending: pendingFactory } = useWriteContract();
+ /*    const { writeContract: writeFactory, isPending: pendingFactory } = useWriteContract();
 
     const handleCreateVault = () => {
     writeFactory({
@@ -30,20 +32,34 @@ const Dashboard = () => {
       functionName: 'createVault',
       args: [1],
     });
-  };
+  }; */
  // or viem if not using wagmi
   const getAllUserWallet = async () => {
     if (!address) return; // avoid calling API without address
     try {
-      console.log("Fetching wallets for:", address);
+      
       const res = await lynkXData.get(`/getUserAddresses/${address}`);
-      console.log("Wallets:", res.data?.wallets); // <- use res.data
-      if (res.data?.wallets) {
+      //console.log("Fetching wallets for:", res.data.wallets);
+      if (res.status === 200) setLoading(false)
+      const data = res.data?.wallets
+    console.log(data)
+    if (res.data?.wallets) {
         setWallets(res.data?.wallets);
       }
+    if (data === undefined) {
+      setReLogin(true)
+    }
+
+
+     // <- use res.data
+      
       
     } catch (err) {
-      console.error("Error fetching wallets:", err);
+      //console.error("Error fetching wallets:", err);
+      if (err) {
+        setLoading(false)
+        setError(err)
+      }
     }
   };
 
@@ -55,7 +71,7 @@ const Dashboard = () => {
         for (const w of wallets) {
         const res = await lynkXData.get(`/get-wallet-address/${w.id}`)
         balances[w.id] = res?.data?.walletBalance ?? 0
-        console.log("balan:", balances[w.id])
+        //console.log("balan:", balances[w.id])
         setBalances(balances);
     }
     
@@ -71,35 +87,12 @@ const Dashboard = () => {
       getAllUserWallet();
     }
   }, [isConnected, address]); // <- add dependencies
-
-
-/* useEffect(() => {
-  const unwatch = watchContractEvent({
-    address: FACTORY_VAULT.address,
-    abi: FACTORY_VAULT.abi,
-    eventName: 'vaultCreated',
-    listener(logs) {
-      console.log("Vault created:", logs);
-    },
-  }); 
-
-  return () => unwatch(); // cleanup
-}, []); */
-
-  /* console.log("vault:", handleCreateVault()) */
-
-  const {data: factoryData} = useReadContract({
-    ...FACTORY_VAULT,
-    functionName: "getVaultAddresses",
-    args: [address]
-  })
-
  
 
   return (
     /*  <p onClick={handleCreateVault}>create</p> */
 
-    <section className='flex flex-col gap-3 text-[#D9D9D9] overflow-y-hidden'>
+    <section className='flex flex-col gap-3 text-[#D9D9D9] overflow-y-auto h-[88vh] scroll-invisible my-4'>
       <div className='w-full flex justify-end'>
         <button type='button' className='bg-[#B0B0B0] rounded-[7px] text-[#292C31] py-1 px-4 cursor-pointer w-fit' onClick={() => setModal(true)}>Create Vault</button>
         
@@ -108,16 +101,27 @@ const Dashboard = () => {
       <div className='border-dashed border-2 border-[#585858] py-2 px-2 justify-center text-[18px] italic flex'>
         
       </div> */}
-      <div className='flex gap-4  w-full flex-wrap'>
+      <div className='flex gap-4 w-full flex-wrap'>
+        {loading && !error && <p className='w-full text-center'> Loading...</p>}
+        {!loading && reLogin && <p className='w-full text-center'>Sign in timeout, log in again to restart</p>}
+        {!loading && wallets.length === 0 && <p className='w-full text-600/50 text-center text-[21px] font-bold pt-10'>Welcome to LynkX, go ahead and create wallet to get started</p>}
         {Array.isArray(wallets) && wallets.length > 0 && wallets.map((wallet, index) => (
-          <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] justify-center' key={index}>
-            <span className='flex gap-4'>Wallet Name: <span>{wallet?.walletName?.toUpperCase()}</span></span>
-            <span className='flex gap-4'>Wallet Name: <span>{wallet?.blockchain?.toUpperCase()}</span></span>
-            <span className=' max-w-[290px] truncate'>{wallet?.address}</span>
-           {/*  <span className='flex gap-4'>Wallet balance: {balances[wallet.id]?.map((balance, index) => (
+          <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] pt-5 pb-1 px-4' key={index}>
+            <span className='flex justify-between w-full '>Wallet Name: <span>{wallet?.walletName?.toUpperCase()}</span></span>
+           {/*  <span className='flex gap-4'>Wallet Name: <span>{wallet?.blockchain?.toUpperCase()}</span></span>
+            <span className=' max-w-[290px] truncate'>{wallet?.address}</span> */}
+             {/* <span className='flex gap-4'>Wallet balance: {balances[wallet.id]?.map((balance, index) => (
               <span key={index}>{balance?.amount ? balance.amount : 0}</span>
             ))}
             </span> */}
+            <span className='w-full flex flex-col'>
+              {balances[wallet.id]?.map((balance, index) => (
+                <div className='flex w-full justify-between py-2' key={index}>
+                  {balance.length === 0 ? <p>0 BALANCE</p> : (<p className='flex w-full justify-between'><span>Amount</span> {balance.amount ? `${Math.round(balance.amount)} ${balance.token.symbol}` : "0"} </p>)}
+                </div>
+                
+              ))}
+            </span>
             
             {/* <div className='flex '>
               <button>Withraw</button>
@@ -127,16 +131,16 @@ const Dashboard = () => {
         ))
 
         }
-        <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] justify-center' >
+        {/* <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] justify-center' >
             <span></span>
             <span></span>
             <div className='flex '>
               <button></button>
             </div>
-        </li>
+        </li> */}
       </div>
 
-      <div className='pt-3'>
+      {/* <div className='pt-3 h-40'>
         <div className='border-dashed border-2 border-[#585858] py-1 px-2 justify-center text-[14px] italic flex'>
         <p className='text-[#B0B0B0] rounded-[7px] px-4' >Vault History</p>
         </div>
@@ -148,7 +152,7 @@ const Dashboard = () => {
         <span className='flex-1/4 '>hh</span>
       </div>
 
-        <div className='bg-[#292C31] overflow-y-auto h-34  scroll-invisible'   >
+        <div className='bg-[#292C31] overflow-y-auto h-40  scroll-invisible'   >
 
         
       <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
@@ -191,7 +195,7 @@ const Dashboard = () => {
 
         </div>
 
-    </div>
+    </div> */}
      
 
 

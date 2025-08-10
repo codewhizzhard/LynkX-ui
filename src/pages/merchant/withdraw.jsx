@@ -17,6 +17,9 @@ const Withdraw = () => {
     const [chains, setChains] = useState([]);
     const [selectedChain, setSelectedChain] = useState("");
     const [openChainSelection, setOpenChainSelection] = useState(false);
+    const [openDestDomain, setOpenDestDomain] = useState(false);
+    const [destDomain, setDestDomain] = useState("");
+    //const [sourceDomain, setSourceDomain] = useState("");
 
     const to = isConnected && address;
     const [option, setOption] = useState("send")
@@ -25,18 +28,25 @@ const Withdraw = () => {
             .string()
             .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid address"),
         amount: z.string().min(1, "Amount is required"),
-        chain: z.string().min(1, "required")
+        chain: z.string().min(1, "required"),
+        destDomain: z.string().min(3, "required"),
+        sourceChain: z.string().min(3, "required"),
+        walletId: z.string().min(5, "required")
     });
 
      const {register, handleSubmit, setValue, formState: {isSubmitting, errors}} = useForm({
             resolver: zodResolver(transferSchema)
         })
+        console.log("issubmiting:", isSubmitting)
+
         const handleSelect = async(option) => {
             console.log("op:", option)
+            setValue("sourceChain", chainNameMap[option.blockchain])
+            setValue("walletId", option.id)
             setSelected(option)
             setOpen(false) 
             setSelectedChain("")
-            const response = await lynkXData.get(`/get-wallet-address/${option.id}`)
+            const response = await lynkXData.get(`/get-wallet-address/${option?.id}`)
             console.log("respos:", response)
             if (response.status === 200) {
             setChains(response.data.walletBalance)
@@ -70,11 +80,13 @@ const Withdraw = () => {
           }
         }, [isConnected, address]); 
         // <- add dependencies
-        
+
+         const handlePickchain = (data) => {
+           setValue("chain", data)
+        }
 
         const handleTransfer = async (data) => {
             console.log(data)
-            
            try {
                 const tokens = await lynkXData.get(`/get-wallet-address/${selected.id}`)
                 if (tokens.status === 200) {
@@ -89,17 +101,56 @@ const Withdraw = () => {
             }
         }
 
-         const handlePickchain = (data) => {
-           setValue("chain", data)
+        const handleCrossChain = async(data) => {
+            console.log("data:", data)
+            try {
+                const res = await lynkXData.post("/cross-chain-transfer", {
+                    walletId: data.walletId, sourceChain: data.sourceChain, amount: data.amount, destChain: data.destDomain, destinationAddress: data.address
+                })
+                console.log("res", res)
+                if (res.status === 200) {
+                    alert("INITIATED")
+                }
+
+            } catch (err) {
+                console.log("err", err)
+            }
         }
+
+        const handleClick = (data) => {
+            console.log("fdata:", data.sourceChain === data.destDomain)
+            if (data.sourceChain === data.destDomain) {
+                handleTransfer(data)
+            } else {
+                handleCrossChain(data)
+            }  
+
+        }
+
+        
+        const destChains = ["ETH-SEPOLIA", "MATIC-AMOY", "BASE-SEPOLIA", "AVAX-FUJI"];
+       /*  const chainNameMap = {
+        'Ethereum Sepolia': 'ethereumSepolia',
+        Polygon: 'polygonAmoy',
+        Base: 'baseSepolia',
+        Avalanche: "avalancheFuji"
+     }; */
+
+     
+     const chainNameMap = {
+        'ETH-SEPOLIA': "ethereumSepolia",
+        'MATIC-AMOY': "polygonAmoy",
+        'BASE-SEPOLIA': "baseSepolia",
+        "AVAX-FUJI": "avalancheFuji"
+     };
 
     return (
       <section className=' flex flex-col text-[#B0B0B0]'>
         <span className='border-dashed border-2 border-[#585858] py-1 px-2 justify-center text-[18px] italic flex text-white'>
             Send to other address, or withraw to connected address
         </span>
-        <div className='flex-grow h-[75vh] pt-3 flex justify-center'>
-            <form className='w-[80%] h-[90%] bg-[#202225] rounded-[30px] p-2 text-[#292C31] flex items-center  flex-col gap-2' onSubmit={handleSubmit(handleTransfer)}>
+        <div className='flex-grow h-[75vh] pt-2 flex justify-center'>
+            <form className='w-[80%] h-[90%] bg-[#202225] rounded-[30px] p-1 text-[#292C31] flex items-center  flex-col gap-1' onSubmit={handleSubmit(handleClick)}>
                 <div className='w-[40%] bg-[#292C31] rounded-[10px] flex justify-center cursor-pointer mt-1'>
                     <span className={`rounded-[7px] text-[16px] font-semibold text-white  px-10 py-2 bg-[#009FBD]`} >Send</span>
                     {/* <span className={`rounded-[7px] text-[16px] font-semibold text-white  px-8 py-2 ${option === "withdraw" ? "bg-[#009FBD]" : ""}`} onClick={() => setOption("withdraw")}>Withdraw</span> */}
@@ -153,17 +204,25 @@ const Withdraw = () => {
                             </div>
                             <div className='flex flex-col relative h-full items-start'>
                                 <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0 h-[3vh] mb-[14px]'>{errors?.chain && errors.chain?.message}</p>
-                                <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center pl-2 p-1' type='button' onClick={() => setOpenChainSelection((prev) => !prev)}>{selectedChain ? selectedChain.length > 13 ? `${selectedChain.slice(0, 13)}...` : selectedChain : "Pick chain" }<FiArrowDown /></button>
-                                {chains.length > 0 && openChainSelection && (<ul className='flex flex-col gap-1 absolute top-18 w-full z-50 cursor-pointer' >{chains.map((chain, index) => (
-                                    <li className=' pl-1 bg-[#B0B0B0] z-50' key={index} onClick={() => {handlePickchain(chain.token.symbol); setOpenChainSelection((prev) => !prev); setSelectedChain(chain.token.symbol)}}>{chain.token.symbol.toUpperCase()}</li>
-                                ) )} </ul>)}
+                                <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center pl-2 p-1' type='button' onClick={() => setOpenChainSelection((prev) => !prev)}>{selectedChain ? selectedChain.length > 13 ? `${selectedChain.slice(0, 13)}...` : selectedChain : "Pick token" }<FiArrowDown /></button>
+                                {chains.length > 0 ?  openChainSelection && (<ul className='flex flex-col gap-1 absolute top-18 w-full z-50 cursor-pointer' >{chains.map((chain, index) => (
+                                    <li className=' pl-1 bg-[#B0B0B0] z-50' key={index} onClick={() => {handlePickchain(chain.token.symbol); setOpenChainSelection((prev) => !prev); setSelectedChain(chain.token.symbol)}} >{chain.token.symbol.toUpperCase()}</li>
+                                ) )} </ul>) : <p className='bg-red-600/50 w-full p-2 text-[17px] font-semibold text-white'>No Data</p>}
                             </div>
                             
                         </div>
                             
-                            <div className='flex flex-col gap-2'>
+                            <div className='flex flex-col gap-1'>
                                 <span className='text-[#B0B0B0] font-semibold text-[16px]'>To</span>
-                                <input type="text" placeholder='place address here' className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD]' {...register("address")}/>
+                                <div className='flex gap-3'><input type="text" placeholder='place address here' className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD] h-[12vh]' {...register("address")}/> 
+                                     <div className='flex flex-col relative h-full items-start relative'>
+                                <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0 h-[3vh] '>{errors?.chain && errors.chain?.message}</p>
+                                <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center text-[14px] pl-1' type='button' onClick={() => setOpenDestDomain((prev) => !prev)}>{destDomain ?  destDomain : "Pick chain" }<FiArrowDown /></button>
+                                {openDestDomain && (<ul className='flex flex-col absolute top-[50px] w-full z-50 cursor-pointer' >{destChains.map((chain, index) => (
+                                    <li className=' pl-1 bg-[#B0B0B0] z-50 border border-red-600/50' key={index} onClick={() => {setValue("destDomain", chainNameMap[chain]); setOpenDestDomain((prev) => !prev); setDestDomain(chain)}}>{chain}</li>
+                                ) )} </ul>) }
+                            </div>
+                                </div>
                                 {errors?.address && <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0'>{errors.address?.message}</p>} 
                             </div>
                             <div className='flex justify-between items-end h-[15vh]'>
@@ -174,7 +233,7 @@ const Withdraw = () => {
                                        
                                         <input type="text" className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD]' placeholder='amount' {...register("amount")}/></div>
                                 </div>
-                                <button type='submit' className='w-[45%] bg-[#009FBD] h-[58%]  rounded-[11px]'>Confirm</button>
+                                <button type='submit' className='w-[45%] bg-[#009FBD] h-[58%]  rounded-[11px] cursor-pointer'>Confirm</button>
                             </div>
                         </div>
                     )

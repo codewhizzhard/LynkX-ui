@@ -36,7 +36,7 @@ const Home = () => {
   return (
     <main className='mt-15 flex justify-between '>
         <div className='min-w-[50%] flex flex-col gap-2'>
-            <h2 className='text-[49px] leading-[115%] italic font-normal'>BECOME A MERCHANT, LIQUIDITY PROVIDER, TREASURY MANAGER, CONTROLLER OF YOUR FUND$</h2>
+            <h2 className='text-[49px] leading-[115%] italic font-normal'>BECOME A MERCHANT, LIQUIDITY PROVIDER, TREASURY MANAGER, CONTROL YOUR FUND$ WITH CIRCLE</h2>
             {isConnected &&
             <button type='button' className='cursor-pointer bg-[#009FBD] rounded-[10px] h-[39px] w-[190px] flex justify-center items-center gap-2 text-[16px] hover:bg-[#009FBD]/70' disabled={!isConnected} onClick={handleConnectWallet}>Sign in <FiArrowRight /></button>}
         </div>

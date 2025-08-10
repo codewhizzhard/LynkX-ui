@@ -11,6 +11,7 @@ const MainBody = () => {
     const {address, isConnected} = useAccount();
     
     const [copied, setCopied] = useState(false)
+    const [profilePics, setProfilePics] = useState("")
 
     let username = "User";
     
@@ -44,6 +45,9 @@ const MainBody = () => {
     useEffect(() => {
         if (address) {
         getUserDetails()
+        const getPics = localStorage.getItem("image")
+        setProfilePics(getPics)
+        //console.log("ggg:", profilePics)
         }
     }, [address])
 
@@ -64,7 +68,7 @@ const MainBody = () => {
                     <h3 className=' leading-none font-semibold text-[14px] '>{username ? username : "User"}</h3>
                     <p className=' leading-none italic text-[14px] flex gap-1 cursor-pointer hover:underline' onClick={() => throttleCopy(address)} > <span>{copied ? <FiCheck className=''  /> : <FiCopy className=''  />} </span>{isConnected ? address : "Not connected"} </p>
                 </span>
-                <div className='w-[57px] h-[57px] rounded-[100%] border-2 border-dashed'><img src={profile} alt="" /></div>
+                <div className='w-[57px] h-[57px] rounded-[100%] border-2 border-dashed'><img  className='w-[54px] h-[54px] rounded-[100%]' src={profilePics ? profilePics : profile} alt="" /></div>
             </div>
         </header>
         <main className='pt-8 overflow-hidden'>

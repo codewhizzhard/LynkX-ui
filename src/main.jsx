@@ -22,6 +22,7 @@ import {
 } from "@tanstack/react-query";
 
 import { config } from './wagmiConfig.js';
+import { AbiProvider } from './context/abiContext.jsx';
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,11 @@ createRoot(document.getElementById('root')).render(
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider >
-          <App />
+          <AbiProvider>
+             <App />
+
+          </AbiProvider>
+         
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

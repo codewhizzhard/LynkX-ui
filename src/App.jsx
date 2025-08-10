@@ -14,6 +14,7 @@ import ProtectedRoutes from "./components/protected";
 import History from "./pages/merchant/history";
 import Settings from "./pages/merchant/settings";
 import SendPayment from "./ReceivePayment/sendPayment";
+import ProxyAwareContract from "./pages/home";
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <Route element={<ProtectedRoutes />}>
         <Route path="/:userType" element={<Layout />}>
         <Route index element={<DisplayDashboard />} />
+        <Route path="gg" element={<ProxyAwareContract />} />
         <Route path="receive" element={<Receive />} />
         <Route path="withdraw" element={<Withdraw />} />
         <Route path="history" element={<History />} />
