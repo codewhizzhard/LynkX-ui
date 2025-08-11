@@ -65,21 +65,37 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    //get wallet balance
-    if (!wallets) return 
-    const getWalletBalance = async() => {
-        for (const w of wallets) {
-        const res = await lynkXData.get(`/get-wallet-address/${w.id}`)
-        balances[w.id] = res?.data?.walletBalance ?? 0
-        //console.log("balan:", balances[w.id])
-        setBalances(balances);
+  if (!wallets) return;
+
+  const getWalletBalance = async () => {
+    // Use Promise.all to fetch all balances concurrently
+    const results = await Promise.all(
+      wallets.map(async (w) => {
+        const res = await lynkXData.get(`/get-wallet-address/${w.id}`);
+        // Return id + balance array or empty array fallback
+        return {
+          id: w.id,
+          balance: res?.data?.walletBalance ?? [],
+        };
+      })
+    );
+
+    // Construct a new balances object mapping id => balance array
+    const newBalances = {};
+    for (const r of results) {
+      newBalances[r.id] = r.balance;
     }
-    
-    
-    }
-   const interval = setInterval(getWalletBalance, 5000);
-   return () => clearInterval(interval);
-  }, [wallets])
+
+    // Update state once with the new balances object
+    setBalances(newBalances);
+  };
+
+  // Fetch immediately and then every 5 seconds
+  getWalletBalance();
+  const interval = setInterval(getWalletBalance, 5000);
+  return () => clearInterval(interval);
+}, [wallets]);
+
 
 
   useEffect(() => {

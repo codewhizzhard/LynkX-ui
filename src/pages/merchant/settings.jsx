@@ -286,16 +286,16 @@ const Settings = () => {
         <div className='bg-[#202225] rounded-[40px] p-3 h-[65vh] overflow-y-auto'>
             <p className='p-1 text-center text-bold text-[20px]'>JUST A CLICK AWAY, EVERYTHING CIRCLE ⏺️</p>
             <div className='flex gap-3 py-1 px-2'>
-                <div className='w-[70%] flex flex-col gap-3 bg-[#009FBD]/25 p-4 rounded-[20px]'>
+                <div className='w-[70%] flex flex-col gap-3 bg-[#009FBD]/60 p-4 rounded-[20px]'>
                     <h2 className='text-center text-[18px] text-black font-semibold'>Explore more 🚀</h2>
                     <ol className='text-[17px] font-medium'>
                         We believe you love your experience using lynkX built on circle already, everything getting done with just a click. Want even a better experience?
                         <li className='pt-2 pl-3 text-black'>Want to pay all your gas fee in USDC?</li>
                         <li className='pt-2 pl-3 text-black'>Want a gasless transaction?</li>
                     </ol>
-                    <button type='button' className='bg-blue-500/50 py-2 rounded-[8px] cursor-pointer'>Just A Click Away</button>
+                    <button type='button' className='bg-white text-black py-2 rounded-[8px] cursor-pointer'>Just A Click Away</button>
                     </div>
-                <div className='w-[70%] flex flex-col gap-3 bg-[#009FBD]/25 p-4 rounded-[20px]'>
+                <div className='w-[70%] flex flex-col gap-3 bg-[#009FBD]/60 p-4 rounded-[20px]'>
                 <h2 className='text-center text-[18px] text-black font-semibold'>Workspace 👌</h2>
                 {storedWorkspace.length > 0 && storedWorkspace.map((workspace, index) => (
                     <a href={workspace}  key={index} target='_blank' rel='noopener noreferrer' className='cursor-pointer'>{workspace}</a>
@@ -307,7 +307,7 @@ const Settings = () => {
                 </div>}
                 <div>
                     <button  type='button' className='w-full' >
-                        {addWorkspace ? <span className='bg-blue-500/50 py-2 px-5 w-[35%] rounded-[4px] mt-2 cursor-pointer' onClick={handleAddWorkspace}>Add</span> : <span onClick={() => setAddWorkspace(true)} className='bg-blue-500/50 p-2 w-[35%] rounded-[4px] mt-2 cursor-pointer' >Add Workspace</span>}
+                        {addWorkspace ? <span className='bg-white text-black py-2 px-5 w-[35%] rounded-[4px] mt-4 cursor-pointer' onClick={handleAddWorkspace}>Add</span> : <span onClick={() => setAddWorkspace(true)} className='bg-white text-black p-2 w-[35%] rounded-[4px] mt-4 cursor-pointer' >Add Workspace</span>}
                     </button>
                 </div>
                {/*  {addWorkspace &&

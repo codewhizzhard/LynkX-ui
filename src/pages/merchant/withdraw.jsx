@@ -212,10 +212,10 @@ const Withdraw = () => {
                             
                         </div>
                             
-                            <div className='flex flex-col gap-1'>
+                            <div className='flex flex-col gap-1 relative'>
                                 <span className='text-[#B0B0B0] font-semibold text-[16px]'>To</span>
                                 <div className='flex gap-3'><input type="text" placeholder='place address here' className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD] h-[12vh]' {...register("address")}/> 
-                                     <div className='flex flex-col relative h-full items-start relative'>
+                                     <div className='flex flex-col  h-full items-start relative bottom-4'>
                                 <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0 h-[3vh] '>{errors?.chain && errors.chain?.message}</p>
                                 <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center text-[14px] pl-1' type='button' onClick={() => setOpenDestDomain((prev) => !prev)}>{destDomain ?  destDomain : "Pick chain" }<FiArrowDown /></button>
                                 {openDestDomain && (<ul className='flex flex-col absolute top-[50px] w-full z-50 cursor-pointer' >{destChains.map((chain, index) => (
