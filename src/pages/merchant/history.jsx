@@ -9,6 +9,7 @@ const History = () => {
     const {address, isConnected} = useAccount();
 
     const [transactions, setTransactions] = useState([])
+    const [loading, setLoading] = useState(false)
 
     const timeFormat = (timestamp) => {
         const now = new Date();
@@ -28,6 +29,7 @@ const History = () => {
 
     const getTransactions = async () => {
          if (!address) return; // avoid calling API without address
+         setLoading(true)
             try {
               console.log("Fetching wallets for:", address);
               const res = await lynkXData.get(`/getUserAddresses/${address}`);
@@ -37,6 +39,7 @@ const History = () => {
                 const ids = res.data?.wallets.map((_id) => _id.id)
                 const histories = await lynkXData.get("/get-transactions")//
                 if (histories?.status === 200) {
+                    setLoading(false)
                     let displayHistory = histories.data?.data.filter((history) => ids.includes(history.walletId))
                     displayHistory = displayHistory.map((dh) => ({...dh, age: timeFormat(dh.createDate)}));
                     setTransactions(displayHistory)
@@ -44,6 +47,7 @@ const History = () => {
                 }}
               
             } catch (err) {
+                setLoading(false)
               console.error("Error fetching wallets:", err);
             }
         }
@@ -67,7 +71,8 @@ const History = () => {
                 <li className='flex-1/5'>Amount</li>
             </ul>
             <ul className='overflow-y-scroll h-[52vh] scroll-invisible'>
-                {transactions.length === 0 && <p className='text-white text-2xl p-4 w-full text-center'>Loading history...</p>}
+                {transactions.length === 0 && !loading  && <p className='text-white text-2xl p-4 w-full text-center'>No data to display</p>}
+                {loading && <p className='text-white text-2xl p-4 w-full text-center'>Loading history...</p>}
                
                 {transactions.length > 0 && transactions.map((transaction, index) => (
                     <li className='flex bg-[#292C31] text-[17px] font-semibold p-3 border-y border-[#B0B0B0] gap-2' key={index}>

@@ -89,12 +89,9 @@ const SendPayment = () => {
 
      const chainIdMap = {
         'ETH-SEPOLIA': 0,  // Ethereum Sepolia
-        'ETH-OPTIMISM': 10,       // Optimism Mainnet OP Sepolia	2
-        'ARBITRUM-SEPOLIA': 3,    // Arbitrum One Mainnet
         'BASE-SEPOLIA': 6, 
         "AVAX-FUJI": 1,
-        "POLYGON-AMOY": 7, 
-        "OP-SEPOLIA": 2,
+        "MATIC-AMOY": 7, 
 
           //'ETH-MAINNET': 1,            // Ethereum Mainnet
          // 'MATIC-POLYGON': 137,       // Polygon Mainnet
@@ -104,7 +101,7 @@ const SendPayment = () => {
             'ETH-SEPOLIA': "ethereumSepolia",       // Arbitrum One Mainnet
             'BASE-SEPOLIA': "baseSepolia", 
             "AVAX-FUJI": "avalancheFuji",
-            "POLYGON-AMOY": "polygonAmoy",
+            "MATIC-AMOY": "polygonAmoy",
         }
         
     
@@ -150,7 +147,7 @@ const SendPayment = () => {
         setErrMessage(false)
         setTransact(true)
         const destinationDomainId = chainIdMap[paymentDetails?.token.chain.toUpperCase()]
-        console.log("hhhhh:", paymentDetails?.receiverAddress)
+        console.log("hhhhh:", paymentDetails?.token.chain)
        chainId = 0/* chainId === "11155111" ? 0 : "11155111"; */
         //console.log("ggg:", chainId)
         try {
@@ -158,7 +155,7 @@ const SendPayment = () => {
             console.log("sourceDomainId", paymentDetails?.token.chain, nameTochainMap[paymentDetails?.token.chain])
             const tkMess = circleContracts["TokenMessengerV2"][optionName]
             const transminterAddress = circleContracts["MessageTransmitterV2"][nameTochainMap[paymentDetails?.token.chain]]
-            console.log("tttt:", transminterAddress)
+            console.log("tttt:", destinationDomainId)
             const res = await cctpData.get(`/cctpv2/get-usdc-fee/${sourceDomainId}/${destinationDomainId}`);
             // if error 404, same chain
             //console.log("checkGasfee;", res.data.message[1])

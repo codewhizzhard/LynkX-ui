@@ -16,7 +16,7 @@ export function useMintUSDC() {
       setError(null);
 
       const hash = await walletClient.writeContract({
-        address: "0xa9fB1b3009DCb79E2fe346c16a604B8Fa8aE0a79" /* getAddress(transmitterAddress) */,
+        address:  getAddress(transmitterAddress) , /* "0xa9fB1b3009DCb79E2fe346c16a604B8Fa8aE0a79" */
         abi: MessageTransmitterAbi.abi,/* [
         {
           type: "function",

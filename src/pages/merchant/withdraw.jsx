@@ -19,6 +19,9 @@ const Withdraw = () => {
     const [openChainSelection, setOpenChainSelection] = useState(false);
     const [openDestDomain, setOpenDestDomain] = useState(false);
     const [destDomain, setDestDomain] = useState("");
+    const [selectedDestination, setSelectedDestination] = useState(null);
+    const [destWalletId, setDestWalletId] = useState("");
+    const [destOpen, setDestOpen] = useState(false);
     //const [sourceDomain, setSourceDomain] = useState("");
 
     const to = isConnected && address;
@@ -31,31 +34,32 @@ const Withdraw = () => {
         chain: z.string().min(1, "required"),
         destDomain: z.string().min(3, "required"),
         sourceChain: z.string().min(3, "required"),
-        walletId: z.string().min(5, "required")
+        walletId: z.string().min(5, "required"),
+        destWalletId: z.string().min(5, "required")
     });
 
      const {register, handleSubmit, setValue, formState: {isSubmitting, errors}} = useForm({
             resolver: zodResolver(transferSchema)
         })
-        console.log("issubmiting:", isSubmitting)
 
         const handleSelect = async(option) => {
-            console.log("op:", option)
             setValue("sourceChain", chainNameMap[option.blockchain])
             setValue("walletId", option.id)
             setSelected(option)
             setOpen(false) 
             setSelectedChain("")
             const response = await lynkXData.get(`/get-wallet-address/${option?.id}`)
-            console.log("respos:", response)
             if (response.status === 200) {
             setChains(response.data.walletBalance)
-            console.log("balance:", response.data.walletBalance)
 
-            }
-           /*  balances[w.id] = response?.data?.walletBalance ?? 0
-            
-            setBalances(balances); */
+            }}
+
+        const handleSelectDestination = async(option) => {
+            setValue("address", option.address)
+            setValue("destWalletId", option.id)
+            setSelectedDestination(option)
+            setDestOpen(false) 
+            setValue("destDomain", chainNameMap[option.blockchain])
         }
 
      const getAllUserWallet = async () => {
@@ -66,7 +70,9 @@ const Withdraw = () => {
           if (res?.status === 200) {
             setWallets(res?.data?.wallets);
             setSelected(res?.data?.wallets[0]);
+            setSelectedDestination(res?.data?.wallets[1]);
             handleSelect(res.data.wallets[0])
+            handleSelectDestination(res?.data?.wallets[1])
           }
           
         } catch (err) {
@@ -86,12 +92,11 @@ const Withdraw = () => {
         }
 
         const handleTransfer = async (data) => {
-            console.log(data)
+        
            try {
                 const tokens = await lynkXData.get(`/get-wallet-address/${selected.id}`)
                 if (tokens.status === 200) {
                     const token = tokens.data?.walletBalance.find((tk) => tk.token.symbol === data.chain)
-                    console.log(typeof data.amount, data.address, token.token.id, selected.id, selected.blockchain)
                     const res = await lynkXData.post("/send-transaction", {amount: data.amount, destinationAddress: data.address, tokenId: token.token.id , walletId: selected.id, blockchain: selected.blockchain})
                     alert(`Transaction ${res?.data?.data?.state}`)
                 } 
@@ -102,10 +107,9 @@ const Withdraw = () => {
         }
 
         const handleCrossChain = async(data) => {
-            console.log("data:", data)
             try {
                 const res = await lynkXData.post("/cross-chain-transfer", {
-                    walletId: data.walletId, sourceChain: data.sourceChain, amount: data.amount, destChain: data.destDomain, destinationAddress: data.address
+                    walletId: data.walletId, sourceChain: data.sourceChain, amount: data.amount, destChain: data.destDomain, destinationAddress: data.address, destWalletId: data.destWalletId
                 })
                 console.log("res", res)
                 if (res.status === 200) {
@@ -118,7 +122,6 @@ const Withdraw = () => {
         }
 
         const handleClick = (data) => {
-            console.log("fdata:", data.sourceChain === data.destDomain)
             if (data.sourceChain === data.destDomain) {
                 handleTransfer(data)
             } else {
@@ -128,13 +131,7 @@ const Withdraw = () => {
         }
 
         
-        const destChains = ["ETH-SEPOLIA", "MATIC-AMOY", "BASE-SEPOLIA", "AVAX-FUJI"];
-       /*  const chainNameMap = {
-        'Ethereum Sepolia': 'ethereumSepolia',
-        Polygon: 'polygonAmoy',
-        Base: 'baseSepolia',
-        Avalanche: "avalancheFuji"
-     }; */
+        //const destChains = ["ETH-SEPOLIA", "MATIC-AMOY", "BASE-SEPOLIA", "AVAX-FUJI"];
 
      
      const chainNameMap = {
@@ -164,8 +161,8 @@ const Withdraw = () => {
                                 <div className='flex flex-col gap-2'>
                                 <span className='text-[#B0B0B0] font-semibold text-[16px]'>From</span>
                                 <div className="relative w-[34vw]">
-                            {/* Selected wallet */}
-                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-2 px-3 cursor-pointer border border-[#009FBD] items-center gap-2' onClick={() => setOpen(!open)}>
+                                {/* Selected wallet */}
+                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-1 px-3 cursor-pointer border border-[#009FBD] items-center gap-1' onClick={() => setOpen(!open)}>
                                 <div
                                 
                                 className=" flex flex-col gap-1"
@@ -183,7 +180,7 @@ const Withdraw = () => {
 
                             {/* Dropdown list */}
                             {open && wallets &&  (
-                                <div className="absolute mt-2 w-full bg-white rounded-[10px] shadow-lg z-10 ">
+                                <div className="absolute mt-2 w-full bg-white rounded-[10px] shadow-lg z-10 overflow-y-auto h-40">
                                 {wallets?.length > 0 && wallets.map((wallet, i) => (
                                     <div
                                     key={i}
@@ -207,21 +204,61 @@ const Withdraw = () => {
                                 <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center pl-2 p-1' type='button' onClick={() => setOpenChainSelection((prev) => !prev)}>{selectedChain ? selectedChain.length > 13 ? `${selectedChain.slice(0, 13)}...` : selectedChain : "Pick token" }<FiArrowDown /></button>
                                 {chains.length > 0 ?  openChainSelection && (<ul className='flex flex-col gap-1 absolute top-18 w-full z-50 cursor-pointer' >{chains.map((chain, index) => (
                                     <li className=' pl-1 bg-[#B0B0B0] z-50' key={index} onClick={() => {handlePickchain(chain.token.symbol); setOpenChainSelection((prev) => !prev); setSelectedChain(chain.token.symbol)}} >{chain.token.symbol.toUpperCase()}</li>
-                                ) )} </ul>) : <p className='bg-red-600/50 w-full p-2 text-[17px] font-semibold text-white'>No Data</p>}
+                                ) )} </ul>) : <p className='bg-red-600/50 w-full px-2 py-1 text-[17px] font-semibold text-white'>No Data</p>}
                             </div>
                             
                         </div>
                             
                             <div className='flex flex-col gap-1 relative'>
                                 <span className='text-[#B0B0B0] font-semibold text-[16px]'>To</span>
-                                <div className='flex gap-3'><input type="text" placeholder='place address here' className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD] h-[12vh]' {...register("address")}/> 
-                                     <div className='flex flex-col  h-full items-start relative bottom-4'>
+                                <div className='flex gap-1'>
+                                    <div className="relative w-full">
+                                {/* Selected wallet */}
+                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-1 px-3 cursor-pointer border border-[#009FBD] items-center gap-1' onClick={() => setDestOpen(!destOpen)}>
+                                <div
+                                
+                                className=" flex flex-col gap-1"
+                            >
+                                <span className="font-semibold">
+                                {selectedDestination?.walletName.toUpperCase() }
+                                </span>
+                                <span className="font-semibold">
+                                {selectedDestination?.address}
+                                </span>
+                            </div>
+                            {destOpen ? <FiArrowUp className='text-2xl flex items-end mt-5'/> : <FiArrowDown className='text-2xl flex items-end mt-5'/>}
+                            </div>
+                            
+
+                            {/* Dropdown list */}
+                            {destOpen && wallets &&  (
+                                <div className="absolute mt-1 w-full bg-white rounded-[10px] shadow-lg z-10  h-24 overflow-y-auto">
+                                {wallets?.length > 0 && wallets.map((wallet, i) => (
+                                    <div
+                                    key={i}
+                                    onClick={() => handleSelectDestination(wallet)}
+                                    className="px-3 py-2 bg-gray-100 cursor-pointer border-[#009FBD] border"
+                                    >
+                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"}</div>
+                                    <div className="text-sm text-gray-500">
+                                        {wallet.address}
+                                    </div>
+                                    
+                                    </div>
+                                ))}
+                                </div>
+                            )}
+                            </div>
+                                    
+                                    
+                                    {/* <input type="text" placeholder='place address here' className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD] h-[12vh]' {...register("address")}/>  */}
+                                {/*       <div className='flex flex-col  h-full items-start relative bottom-4'>
                                 <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0 h-[3vh] '>{errors?.chain && errors.chain?.message}</p>
                                 <button  className='text-[#B0B0B0] flex justify-between items-center border-4 border-[#009FBD] w-[12vw] cursor-pointer text-center text-[14px] pl-1' type='button' onClick={() => setOpenDestDomain((prev) => !prev)}>{destDomain ?  destDomain : "Pick chain" }<FiArrowDown /></button>
                                 {openDestDomain && (<ul className='flex flex-col absolute top-[50px] w-full z-50 cursor-pointer' >{destChains.map((chain, index) => (
                                     <li className=' pl-1 bg-[#B0B0B0] z-50 border border-red-600/50' key={index} onClick={() => {setValue("destDomain", chainNameMap[chain]); setOpenDestDomain((prev) => !prev); setDestDomain(chain)}}>{chain}</li>
                                 ) )} </ul>) }
-                            </div>
+                            </div> */}
                                 </div>
                                 {errors?.address && <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0'>{errors.address?.message}</p>} 
                             </div>
