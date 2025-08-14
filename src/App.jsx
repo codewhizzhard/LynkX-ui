@@ -39,7 +39,6 @@ function App() {
         <Route element={<ProtectedRoutes />}>
         <Route path="/:userType" element={<Layout />}>
         <Route index element={<DisplayDashboard />} />
-        <Route path="gg" element={<ProxyAwareContract />} />
         <Route path="receive" element={<Receive />} />
         <Route path="withdraw" element={<Withdraw />} />
         <Route path="history" element={<History />} />

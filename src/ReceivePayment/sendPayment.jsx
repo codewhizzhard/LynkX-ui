@@ -13,18 +13,34 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { USDC_CONTRACTS, circleContracts } from '../hooks/circleHooks/circledeployedContracts'
 import { useDepositForBurn } from '../hooks/circleHooks/depositForBurn'
 import { retrieveMsg } from '../hooks/circleHooks/retrieveMsg'
-import { useMintUSDC } from '../hooks/circleHooks/mintUsdc'
 import Web3 from "web3";
+import { sepolia, avalancheFuji, baseSepolia, polygonAmoy } from 'viem/chains';
+import { useWalletClient } from "wagmi";
+import { erc20Abi, encodeFunctionData, getContract, http, createPublicClient, parseUnits, encodePacked, hexToBigInt, hexToSignature } from "viem";
+import { paymaster } from './paymaster'
+import { toSimple7702SmartAccount, createBundlerClient } from "viem/account-abstraction";
+import tokenMessengerAbi from "../abi/tokenMessagerAbi.json";
+//import { useSmartAccount } from './createSmartAccount'
+import { getPublicClient } from 'wagmi/actions'
+import { usePublicClient } from "wagmi";
+import { signPermit } from "./permit.js";
+import { privateKeyToAccount } from 'viem/accounts'
+import { useSendUSDC } from './erc20Transfer.js'
+import { useUSDCBalance } from './balance.js'
+    
+    
 
 
 
 const SendPayment = () => {
+    //const { getSmartAccount } = useSmartAccount();
+    const { sendUSDC, hash, isLoading, error } = useSendUSDC('sepolia')
+ 
     const web3 = new Web3(`https://sepolia.infura.io/v3/0e92b732d2c44995b03942276a10198c`);
 
     const { id } = useParams()
 
     const {approveUSDC, status, txHash, receipt} = useApproveUSDC()
-    const {mintUSDC, status: mintStatus, txHash: mintTxHash, error} = useMintUSDC()
 
     const {address, isConnected} = useAccount();
     const { connect, connectors } = useConnect()
@@ -51,12 +67,16 @@ const SendPayment = () => {
                 setPaymentDetails(res.data?.payment)
             }
         } catch (err) {
-            console.log("err:", err);
             if (err.status === 400) setLoading(false)
         }
     }
+
+      const { data: walletClient } = useWalletClient();
+      
+    
     useEffect(() => {
         getParticularPaymentDetails()
+        
     }, [id])
 
      const chainNameMap = {
@@ -92,10 +112,12 @@ const SendPayment = () => {
         'BASE-SEPOLIA': 6, 
         "AVAX-FUJI": 1,
         "MATIC-AMOY": 7, 
-
-          //'ETH-MAINNET': 1,            // Ethereum Mainnet
-         // 'MATIC-POLYGON': 137,       // Polygon Mainnet
-        // Base Sepolia (testnet)
+        }
+        const metamaskChainIdMap = {
+            "Sepolia": 0,
+            "Base Sepolia": 6,
+            "Avalanche Fuji": 1,
+            "Polygon Amoy": 7,
         }
         const nameTochainMap = {
             'ETH-SEPOLIA': "ethereumSepolia",       // Arbitrum One Mainnet
@@ -103,6 +125,8 @@ const SendPayment = () => {
             "AVAX-FUJI": "avalancheFuji",
             "MATIC-AMOY": "polygonAmoy",
         }
+
+       
         
     
      const handleSourceChain = (value) => {
@@ -121,57 +145,54 @@ const SendPayment = () => {
         if (sourceChain === paymentDetails.token.chain) return setCctpv2Option("")
         setCctpv2Option(option)
      }
-     /* useEffect(() => {
-        setCctpv2Option("")
-     }, sourceChain) */
      
      const optionName = chainId && chainIdToName[chainId]
 
     const { depositForBurn, status: burnStatus, txHash: burnTxHash } = useDepositForBurn(circleContracts["TokenMessengerV2"][optionName])
-
-  /*    const msg = {
-    attestation: "0xf1e9123c762828e1cfe8663efb225022238a306dd35a53713b9b3c469f7a735d664852b0c7fa41f9c7188c112042ac3bfbe4f2f59a939de73bdb12fb8ff088561b2d4f965cd279c6b5dd6fc8000e5683ec752b8759024602f0e669f57b8da07dbf60fe6c7424fa49d107cbcc016332ca73422ecff2759b36a10a641b3d148786d21c",
-    message: "0x000000010000000000000006a0c3b3c957b15fc43e00a189d879c8fbd7cbabfde05e252f5ab6f54a31af32530000000000000000000000008fe6b999dc680ccfdd5bf7eb0974218be2542daa0000000000000000000000008fe6b999dc680ccfdd5bf7eb0974218be2542daa0000000000000000000000000000000000000000000000000000000000000000000003e8000007d0000000010000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238000000000000000000000000cab180b62d3cc891802e072af06197f012cce73600000000000000000000000000000000000000000000000000000000000f4240000000000000000000000000cab180b62d3cc891802e072af06197f012cce736000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-}
-    const wok = async () => {
-        const work = await mintUSDC({transmitterAddress: "0x7865fAfC2db2093669d92c0F33AeEF291086BEFD",
-  attestation: msg,
-})
-    console.log("work:", work) */
+   
+     const { balance } = useUSDCBalance(USDC_CONTRACTS[optionName])
     
      const handleSend = async() => {
         if (!isConnected) {
             const metamask = connectors.find(c => c.id === 'metaMask')
             if (metamask) connect({ connector: metamask })
         }
+
         setErrMessage(false)
+        
         setTransact(true)
+        if (balance < parseFloat(paymentDetails?.amount.$numberDecimal)) {
+            alert("Insufficient USDC balance. Please fund your wallet.")
+            setTransact(true)
+            return 
+        }
+     
+
         const destinationDomainId = chainIdMap[paymentDetails?.token.chain.toUpperCase()]
-        console.log("hhhhh:", paymentDetails?.token.chain)
-       chainId = 0/* chainId === "11155111" ? 0 : "11155111"; */
-        //console.log("ggg:", chainId)
+        
+       
         try {
-            const sourceDomainId = chainId
-            console.log("sourceDomainId", paymentDetails?.token.chain, nameTochainMap[paymentDetails?.token.chain])
+            const usdcAddress = USDC_CONTRACTS[optionName]
+            const sourceDomainId =  metamaskChainIdMap[walletClient.chain.name] 
+
             const tkMess = circleContracts["TokenMessengerV2"][optionName]
             const transminterAddress = circleContracts["MessageTransmitterV2"][nameTochainMap[paymentDetails?.token.chain]]
-            console.log("tttt:", destinationDomainId)
+            if (sourceDomainId === destinationDomainId) {
+                setTransact(true)
+                sendUSDC(paymentDetails.receiverAddress, paymentDetails.amount.$numberDecimal, usdcAddress)
+                alert("INITIATED")
+                setTransact(false)
+            } else {
             const res = await cctpData.get(`/cctpv2/get-usdc-fee/${sourceDomainId}/${destinationDomainId}`);
-            // if error 404, same chain
-            //console.log("checkGasfee;", res.data.message[1])
-            //console.log("tokenMesagger:",  )
-            
-            //console.log("tkt:", transminterAddress)
-            const usdcAddress = USDC_CONTRACTS[optionName]
+         
             await approveUSDC({
                 usdcAddress: usdcAddress,
                 tokenMessengerAddress: tkMess,
                 amount: paymentDetails.amount.$numberDecimal, // USDC
             }) 
-            console.log("working:", typeof Number(paymentDetails.amount.$numberDecimal))
-            console.log("soD:", sourceDomainId)
+           
             const hash = await depositForBurn({
-                amount: 1, //Number(paymentDetails.amount.$numberDecimal),
+                amount: Number(paymentDetails.amount.$numberDecimal),
                 destinationDomain: destinationDomainId,
                 mintRecipient: paymentDetails.receiverAddress,
                 burnToken: usdcAddress,
@@ -180,8 +201,7 @@ const SendPayment = () => {
             }) 
              if (hash) {
                 const msg = await retrieveMsg(sourceDomainId, hash)
-                console.log("nowmint:", msg, transminterAddress)
-                console.log("minting:", msg)
+         
                 const getMint = await lynkXData.post("/cross-chain-mint", {
                     walletId: paymentDetails.walletId, message: msg.message, attestation: msg.attestation, contractAddress: transminterAddress
                 });
@@ -189,21 +209,157 @@ const SendPayment = () => {
                 if (getMint.status === 200) {
                     alert("INITIATED")
                 }
-            //const minted = await mintUSDC({transmitterAddress: transminterAddress, attestation: msg})
-            //console.log("mint", minted) 
-                //const msgT = circleContracts["MessageTransmitterV2"][nameTochainMap[paymentDetails?.token.chain]]
-                
-                
+         
             }
-            //console.log("deposit:", depositForBurn, burnStatus, burnTxHash)
-           
+        }
 
         } catch (err) {
-            console.log("errghh:", err)
-            if (err.code === "ERR_BAD_REQUEST") {setErrMessage(true); setTransact(false)}
+            if (err.code === "ERR_BAD_REQUEST") {
+                setTransact(false)
+                setErrMessage(true); 
+                }
         }
      }
-      
+       
+
+/* const chainConfigs = {
+  ethereumSepolia: sepolia,      // from viem/wagmi
+  baseSepolia: baseSepolia,
+  polygonAmoy: polygonAmoy,
+  avalancheFuji: avalancheFuji,
+}; */
+
+
+
+/* const clients = {
+  sepolia: createPublicClient({ chain: sepolia, transport: http() }),
+  avalancheFuji: createPublicClient({ chain: avalancheFuji, transport: http() }),
+  baseSepolia: createPublicClient({ chain: baseSepolia, transport: http() }),
+  polygonAmoy: createPublicClient({ chain: polygonAmoy, transport: http() }),
+}; *//* 
+const handleSend = async () => {
+  if (!isConnected) return;
+
+  setErrMessage(false);
+  setTransact(true);
+
+  try {
+    // --- 1) Resolve chain config ---
+    const chainKey = paymentDetails.token.chain; // e.g. "polygonAmoy"
+
+    const chainConfig = nameTochainMap[chainKey];
+    const bundlerRpc = "https://public.pimlico.io/v2/11155111/rpc"; // store per-chain RPC in a config object
+
+    if (!bundlerRpc || !chainConfig) {
+      throw new Error(`Unsupported chain: ${chainKey}`);
+    }
+
+    console.log("chainConfig:", chainConfig, bundlerRpc);
+    console.log("chainKey:", chainConfig);
+
+    // --- 2) Resolve contracts ---
+    const tkMess = circleContracts.TokenMessengerV2[optionName];
+    console.log("optionNa:", tkMess)
+    const transminterAddress = circleContracts.MessageTransmitterV2[nameTochainMap[paymentDetails?.token.chain]];
+    console.log("transmit:", transminterAddress)
+    const usdcAddress = USDC_CONTRACTS[optionName];
+    console.log("usdcAddress:", usdcAddress)
+
+    if (!tkMess || !transminterAddress || !usdcAddress) {
+      throw new Error(`Missing contract address for chain: ${chainKey}`);
+    }
+
+    // --- 3) Create smart account ---
+    const account = await toSimple7702SmartAccount({
+      client: walletClient,
+      owner: walletClient.account,
+    });
+
+    console.log("Smart account address:", account.address);
+
+    // --- 4) Check USDC balance ---
+    const usdc = getContract({ client, address: usdcAddress, abi: erc20Abi });
+    const usdcBalance = await usdc.read.balanceOf([account.address]);
+
+    if (usdcBalance < parseUnits(paymentDetails.amount.$numberDecimal.toString(), 6)) {
+      setTransact(false);
+      setErrMessage(true);
+      console.warn(
+        `Insufficient USDC. Fund ${account.address} with USDC on ${chainKey}`
+      );
+      return;
+    }
+
+    // --- 5) Create bundler client with paymaster ---
+    const bundlerClient = createBundlerClient({
+      transport: http(bundlerRpc),
+      chain: sepolia,
+      account,
+      paymaster: {
+        async getPaymasterData(params) {
+          return paymaster.getPaymasterData({
+            ...params,
+            usdcAddress,
+            account,
+            client,
+            amount: paymentDetails.amount.$numberDecimal,
+            chain: sepolia,
+          });
+        },
+      },
+    });
+
+    console.log("Bundler client ready:", bundlerClient.name);
+
+    // --- 6) Format amount (USDC has 6 decimals) ---
+    const amount6 = parseUnits(paymentDetails.amount.$numberDecimal.toString(), 6);
+
+    // --- 7) Approve USDC spend (gas sponsored) ---
+    const approveTxHash = await bundlerClient.sendTransaction({
+      to: usdcAddress,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [tkMess, amount6],
+      }),
+    });
+    console.log("Approve tx hash:", approveTxHash);
+    await bundlerClient.waitForTransactionReceipt({ hash: approveTxHash });
+
+    // --- 8) Burn USDC (gas sponsored) ---
+    const destinationDomainId = chainIdMap[paymentDetails.token.chain.toUpperCase()];
+    const sourceDomainId = 0; // or set if needed
+
+    const burnTxHash = await bundlerClient.sendTransaction({
+      to: tkMess,
+      data: encodeFunctionData({
+        abi: tokenMessengerAbi,
+        functionName: "depositForBurn",
+        args: [amount6, destinationDomainId, paymentDetails.receiverAddress, usdcAddress],
+      }),
+    });
+    console.log("Burn tx hash:", burnTxHash);
+    await bundlerClient.waitForTransactionReceipt({ hash: burnTxHash });
+
+    // --- 9) Retrieve Circle attestation + mint ---
+    const msg = await retrieveMsg(sourceDomainId, burnTxHash);
+    const mintResponse = await lynkXData.post("/cross-chain-mint", {
+      walletId: paymentDetails.walletId,
+      message: msg.message,
+      attestation: msg.attestation,
+      contractAddress: transminterAddress,
+    });
+
+    setTransact(false);
+    if (mintResponse.status === 200) {
+      alert("INITIATED");
+    }
+  } catch (err) {
+    console.error("Transaction error:", err);
+    setErrMessage(true);
+    setTransact(false);
+  }
+}; */
 
   return (
     <div className='w-full h-[100vh]'>
@@ -260,7 +416,7 @@ const SendPayment = () => {
                                     
                                 </div>
                                 
-                                {errMessage && <p className='text-red-600/50'>!They are on the same chain send normally from metamask, this is only for cross chain transaction</p>}
+                                {errMessage && <p className='text-red-600/50'>{errMessage}</p>}
                             </div>
 
 

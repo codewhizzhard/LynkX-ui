@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [reLogin, setReLogin] = useState(false)
+  const [balanceLoading, setBalanceLoading] = useState(false)
 
 
  /*    const { writeContract: writeFactory, isPending: pendingFactory } = useWriteContract();
@@ -68,26 +69,29 @@ const Dashboard = () => {
   if (!wallets) return;
 
   const getWalletBalance = async () => {
-    // Use Promise.all to fetch all balances concurrently
-    const results = await Promise.all(
+    setBalanceLoading(true);
+    try {
+        const results = await Promise.all(
       wallets.map(async (w) => {
         const res = await lynkXData.get(`/get-wallet-address/${w.id}`);
-        // Return id + balance array or empty array fallback
+        setBalanceLoading(false)
         return {
           id: w.id,
           balance: res?.data?.walletBalance ?? [],
         };
       })
     );
-
-    // Construct a new balances object mapping id => balance array
-    const newBalances = {};
+     const newBalances = {};
     for (const r of results) {
       newBalances[r.id] = r.balance;
     }
-
-    // Update state once with the new balances object
     setBalances(newBalances);
+    } catch (err) {
+      setBalanceLoading(false)
+      console.log("err:", err)
+    }
+  
+    
   };
 
   // Fetch immediately and then every 5 seconds
@@ -124,16 +128,13 @@ const Dashboard = () => {
         {Array.isArray(wallets) && wallets.length > 0 && wallets.map((wallet, index) => (
           <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] pt-5 pb-1 px-4' key={index}>
             <span className='flex justify-between w-full '>Wallet Name: <span>{wallet?.walletName?.toUpperCase()}</span></span>
-           {/*  <span className='flex gap-4'>Wallet Name: <span>{wallet?.blockchain?.toUpperCase()}</span></span>
-            <span className=' max-w-[290px] truncate'>{wallet?.address}</span> */}
-             {/* <span className='flex gap-4'>Wallet balance: {balances[wallet.id]?.map((balance, index) => (
-              <span key={index}>{balance?.amount ? balance.amount : 0}</span>
-            ))}
-            </span> */}
+           
             <span className='w-full flex flex-col'>
+              {/* {balanceLoading && <p className='text-center pt-4'>Balance Loading...</p>} */}
               {balances[wallet.id]?.map((balance, index) => (
                 <div className='flex w-full justify-between py-2' key={index}>
-                  {balance.length === 0 ? <p>0 BALANCE</p> : (<p className='flex w-full justify-between'><span>Amount</span> {balance.amount ? `${Math.round(balance.amount)} ${balance.token.symbol}` : "0"} </p>)}
+                  
+                   {balance.length === 0  ? <p>0 BALANCE</p> : (<p className='flex w-full justify-between'><span>Amount</span> {balance.amount ? `${balance.amount} ${balance.token.symbol}` : "0"} </p>)}
                 </div>
                 
               ))}
@@ -155,64 +156,6 @@ const Dashboard = () => {
             </div>
         </li> */}
       </div>
-
-      {/* <div className='pt-3 h-40'>
-        <div className='border-dashed border-2 border-[#585858] py-1 px-2 justify-center text-[14px] italic flex'>
-        <p className='text-[#B0B0B0] rounded-[7px] px-4' >Vault History</p>
-        </div>
-
-        <div className='flex bg-[#202225] w-full px-3 py-2'>
-        <span className='flex-1/4'>vaultName</span>
-        <span className='flex-1/4'>hh hhhsyys gtddt</span>
-        <span className='flex-1/4'>hhh hhsyys</span>
-        <span className='flex-1/4 '>hh</span>
-      </div>
-
-        <div className='bg-[#292C31] overflow-y-auto h-40  scroll-invisible'   >
-
-        
-      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
-        <span className='flex-1/4'>hh</span>
-        <span className='flex-1/4'>hh hhhsyys gtddt</span>
-        <span className='flex-1/4'>hhhhhsyys gtddt</span>
-        <span className='flex-1/4'>hh</span>
-      </div>
-      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
-        <span className='flex-1/4'>hh</span>
-        <span className='flex-1/4'>hh hhhsyys gtddt</span>
-        <span className='flex-1/4'>hhhhhsyys gtddt</span>
-        <span className='flex-1/4'>hh</span>
-      </div>
-      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
-        <span className='flex-1/4'>hh</span>
-        <span className='flex-1/4'>hh hhhsyys gtddt</span>
-        <span className='flex-1/4'>hhhhhsyys gtddt</span>
-        <span className='flex-1/4'>hh</span>
-      </div>
-      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
-        <span className='flex-1/4'>hh</span>
-        <span className='flex-1/4'>hh hhhsyys gtddt</span>
-        <span className='flex-1/4'>hhhhhsyys gtddt</span>
-        <span className='flex-1/4'>hh</span>
-      </div>
-      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
-        <span className='flex-1/4'>hh</span>
-        <span className='flex-1/4'>hh hhhsyys gtddt</span>
-        <span className='flex-1/4'>hhhhhsyys gtddt</span>
-        <span className='flex-1/4'>hh</span>
-      </div>
-      <div className='flex px-3 py-2 border-y border-[#D9D9D9]'>
-        <span className='flex-1/4'>hh</span>
-        <span className='flex-1/4'>hh hhhsyys gtddt</span>
-        <span className='flex-1/4'>hhhhhsyys gtddt</span>
-        <span className='flex-1/4'>hh</span>
-      </div>
-      
-
-        </div>
-
-    </div> */}
-     
 
 
       {/* pop up */}

@@ -23,9 +23,7 @@ function normalizeChainName(chainId) {
 }
  */
 const Receive = () => {
-   const { getAbi, loading } = useAbi();
   const chainId = useChainId();
-  const [abi, setAbi] = useState(null);
 
 
 
@@ -39,6 +37,7 @@ const Receive = () => {
     const [link, setLink] = useState("");
     const [copied, setCopied] = useState(false)
     const [loader, setLoader] = useState(false)
+    const [walletLoader, setWalletLoader] = useState(false)
       
     const receiveSchema = z.object({
         productName: z.string().optional(),
@@ -91,14 +90,17 @@ const Receive = () => {
     const getAllUserWallet = async () => {
             if (!address) return; // avoid calling API without address
             try {
+                setWalletLoader(true);
               //console.log("Fetching wallets for:", address);
               const res = await lynkXData.get(`/getUserAddresses/${address}`);
               if (res?.status === 200) {
+                setWalletLoader(false);
                 setWallets(res?.data?.wallets);
                 //console.log("h:", res?.data?.wallets)
               }
               
             } catch (err) {
+                setWalletLoader(false);
               console.error("Error fetching wallets:", err);
             }
           };
@@ -146,7 +148,8 @@ const Receive = () => {
                             <div className='bg-[#B0B0B0] w-[85%] py-4 rounded-[7px] px-3 outline-none flex justify-between items-center cursor-pointer'   onClick={() => setOpen((prev) => !prev)}>{selectedAddress ? selectedAddress?.walletName.toUpperCase() : "pick a chain"} {open ? <FiArrowUp className='text-[20px]'/> : <FiArrowDown className='text-[20px]' /> }</div>
                             {open && wallets &&  (
                                 <div className="absolute mt-2 bg-white rounded-[10px] shadow-lg z-10 w-[85%] top-13 h-34 py-2 overflow-y-auto">
-                                {wallets?.length > 0 && wallets.map((wallet, i) => (
+                                    {walletLoader ? <p className='text-gray-500 text-center'>Loading wallets...</p> : wallets?.length === 0 && <p className='text-gray-500 text-center'>No wallets found</p>}
+                                    {wallets?.length > 0 && wallets.map((wallet, i) => (
                                     <div
                                     key={i}
                                     onClick={() => {handleSelect(wallet); setOpen(false)}}
