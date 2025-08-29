@@ -38,6 +38,7 @@ const Receive = () => {
     const [copied, setCopied] = useState(false)
     const [loader, setLoader] = useState(false)
     const [walletLoader, setWalletLoader] = useState(false)
+    const [generateErr, setGenerateErr] = useState("")
       
     const receiveSchema = z.object({
         productName: z.string().optional(),
@@ -74,16 +75,15 @@ const Receive = () => {
         if (!isConnected) return <p>connect your wallet</p>
         setLoader(true);
         try {
-            console.log("conecting")
             const res = await lynkXData.post("/post-payment-info", {userAddress: address, productName: data?.productName || null, orderId: data?.orderId || null, amount: data.amount, receiverAddress: data.address, blockchain: data.blockchain, walletId: data.walletId})
-            console.log("conected")
+          
             if (res.status === 201) {
-                console.log("pay", res.data.paymentObj?.paymentLink)
                 setLink(res.data.paymentObj?.paymentLink)
             }
             setLoader(false)
         } catch (err) {
-            console.log("err:", err)
+            //console.log("err:", err.message)
+            setGenerateErr(err.message)
         }
     }
 
@@ -172,7 +172,7 @@ const Receive = () => {
                         {loader ? <p className='text-white my-0'>Loading...</p> : link && <p className=' leading-none italic text-[14px] flex gap-3 cursor-pointer hover:underline text-[#B0B0B0]' onClick={() => throttleCopy(link)} >{link} <span>{copied ? <FiCheck className=''  /> : <FiCopy className=''  />}</span> </p>}
                     </div>
                      <div className='flex justify-between w-[80%]'>
-                        <button className='text-white bg-[#202225] py-3 px-8 rounded-[11px] text-[16px] font-semibold cursor-pointer border-2 border-[#009FBD] flex items-center gap-1' type='button' onClick={() => {reset(); setLink(""); setSelectedAddress("")}}> {/* <FiArrowLeft className='text-[20px]'/> */}Clear</button>
+                        <button className='text-white bg-[#202225] py-3 px-8 rounded-[11px] text-[16px] font-semibold cursor-pointer border-2 border-[#009FBD] flex items-center gap-1' type='button' onClick={() => {reset(); setLink(""); setLoader(false); setSelectedAddress("")}}> {/* <FiArrowLeft className='text-[20px]'/> */}Clear</button>
                         <button className='text-white bg-[#009FBD] py-3 px-10 rounded-[11px] text-[16px] font-semibold cursor-pointer ' type='submit'>Generate</button>
                     </div>
                 </form>

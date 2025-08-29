@@ -159,7 +159,7 @@ const Dashboard = () => {
 
 
       {/* pop up */}
-      <DashboardModal modal={modal} setModal={setModal} address={address}/>
+      <DashboardModal modal={modal} setModal={setModal} address={address} wallets={wallets}/>
     </section>
     
   )

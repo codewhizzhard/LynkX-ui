@@ -3,7 +3,7 @@ import lynkXData from '../../service/axios';
 import { useEffect } from 'react';
 import { avalanche } from 'viem/chains';
 
-const DashboardModal = ({modal, setModal, address}) => {
+const DashboardModal = ({modal, setModal, address, wallets}) => {
 
     const [walletName, setWalletName] = useState("")
     const [blockchains, setBlockchains] = useState(["ETH-SEPOLIA"])
@@ -47,10 +47,11 @@ const DashboardModal = ({modal, setModal, address}) => {
 
   return (
     <div>
-    {modal &&
+      {modal &&
       <div className='fixed top-0 w-full bg-black/90 left-0 right-0 h-full flex justify-center items-center flex-col '>
       <div className='w-[50%] bg-[#009FBD]/50 flex flex-col gap-4 px-10 rounded-[30px] h-[60%] justify-center'>
-          <div className='flex flex-col gap-3'>
+      {wallets.length >= 4  ? <p className='text-center text-red-500'>You have reached the maximum number of wallets allowed (4).</p> : <>
+        <div className='flex flex-col gap-3'>
           <label htmlFor="" >Wallet Name</label>
           <input type="text" placeholder='walletName' className='p-2 bg-[#D9D9D9] outline-none rounded-[7px] text-black' value={walletName} onChange={(e) => setWalletName(e.target.value)}/>
         </div>
@@ -62,15 +63,12 @@ const DashboardModal = ({modal, setModal, address}) => {
                 {value}
               </option>
             ))}
-{/*           <option>Ethereum</option>
-          <option>Liquidity Provider</option>s
-          <option>Treasury Manager</option>
- */}        </select>
-        </div>
-        {loading &&<p>Loading</p>}
+            </select>
+        </div>  </>}
+        {loading &&<p>Loading</p>} 
         <div className='flex justify-between'>
           <button type='button' className='py-3 px-6 rounded-[7px] bg-red-500/60 cursor-pointer' onClick={() => setModal(false)}>Cancel</button>
-          <button type='button' className='py-3 px-6 rounded-[7px] bg-green-400/60 cursor-pointer' onClick={handleCreate} disabled={loading}>Create</button>
+         {wallets.length < 4 && <button type='button' className='py-3 px-6 rounded-[7px] bg-green-400/60 cursor-pointer' onClick={handleCreate} disabled={loading}>Create</button>}
         </div>
         
 
@@ -78,7 +76,8 @@ const DashboardModal = ({modal, setModal, address}) => {
       
 
       </div>
-      }</div>
+}
+      </div>
   )
 }
 

@@ -17,12 +17,13 @@ const Withdraw = () => {
     const [chains, setChains] = useState([]);
     const [selectedChain, setSelectedChain] = useState("");
     const [openChainSelection, setOpenChainSelection] = useState(false);
-    const [openDestDomain, setOpenDestDomain] = useState(false);
-    const [destDomain, setDestDomain] = useState("");
+    //const [openDestDomain, setOpenDestDomain] = useState(false);
+   // const [destDomain, setDestDomain] = useState("");
     const [selectedDestination, setSelectedDestination] = useState(null);
-    const [destWalletId, setDestWalletId] = useState("");
+    //const [destWalletId, setDestWalletId] = useState("");
     const [destOpen, setDestOpen] = useState(false);
     //const [sourceDomain, setSourceDomain] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const to = isConnected && address;
     const [option, setOption] = useState("send")
@@ -92,32 +93,40 @@ const Withdraw = () => {
         }
 
         const handleTransfer = async (data) => {
-        
+            setLoading(true)
            try {
                 const tokens = await lynkXData.get(`/get-wallet-address/${selected.id}`)
                 if (tokens.status === 200) {
                     const token = tokens.data?.walletBalance.find((tk) => tk.token.symbol === data.chain)
                     const res = await lynkXData.post("/send-transaction", {amount: data.amount, destinationAddress: data.address, tokenId: token.token.id , walletId: selected.id, blockchain: selected.blockchain})
-                    alert(`Transaction ${res?.data?.data?.state}`)
+                    console.log(res)
+                    if (res.status === 200) {
+                        setLoading(false)
+                        alert(`Transaction ${res?.data?.data?.state}`)
+                    }
                 } 
                 
             } catch (err) {
                 console.log("err:", err)
+                setLoading(false)
             }
         }
 
         const handleCrossChain = async(data) => {
+             setLoading(true)
             try {
                 const res = await lynkXData.post("/cross-chain-transfer", {
                     walletId: data.walletId, sourceChain: data.sourceChain, amount: data.amount, destChain: data.destDomain, destinationAddress: data.address, destWalletId: data.destWalletId
                 })
                 console.log("res", res)
                 if (res.status === 200) {
+                    setLoading(false)
                     alert("INITIATED")
                 }
 
             } catch (err) {
                 console.log("err", err)
+                setLoading(false)
             }
         }
 
@@ -270,7 +279,7 @@ const Withdraw = () => {
                                        
                                         <input type="text" className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD]' placeholder='amount' {...register("amount")}/></div>
                                 </div>
-                                <button type='submit' className='w-[45%] bg-[#009FBD] h-[58%]  rounded-[11px] cursor-pointer'>Confirm</button>
+                                <button type='submit' className='w-[45%] bg-[#009FBD] h-[58%]  rounded-[11px] cursor-pointer'>{loading ? "Loading..." : "Confirm"}</button>
                             </div>
                         </div>
                     )
