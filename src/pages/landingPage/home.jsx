@@ -40,7 +40,7 @@ const Home = () => {
   return (
     <main className='mt-15 flex justify-between '>
         <div className='min-w-[50%] flex flex-col gap-2'>
-            <h2 className='text-[49px] leading-[115%] italic font-normal'>BECOME A MERCHANT, LIQUIDITY PROVIDER, TREASURY MANAGER, CONTROL YOUR FUND$ WITH CIRCLE</h2>
+            <h2 className='text-[49px] leading-[115%] italic font-normal pb-5'>BECOME THE CONTROLLER OF ALL YOUR <span className='text-green-400'>FUND$</span> ON MULTICHAIN,BY PUTTING THEM ALL IN <span className='text-[#009FBD] p-2'>CIRCLE</span> ⏺️</h2>
             {isConnected &&
             <button type='button' className='cursor-pointer bg-[#009FBD] rounded-[10px] h-[39px] w-[190px] flex justify-center items-center gap-2 text-[16px] hover:bg-[#009FBD]/70' disabled={!isConnected || loading} onClick={handleConnectWallet}>{!loading ? <p className='flex items-center gap-1'>Sign in <FiArrowRight /></p> : "Loading..." } </button>}
             {!loading && errMsg && <p>{errMsg}</p>}

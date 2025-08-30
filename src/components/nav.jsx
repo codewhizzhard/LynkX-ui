@@ -34,7 +34,7 @@ const Nav = () => {
                 <Link to={`/${userType}${data.to}`} key={index}> <li key={index} className={`cursor-pointer py-3 px-2 rounded-[5px] ${data.to.slice(1) === page ? "bg-[#009FBD] " : ""}`} onClick={() => setPage(data.to.slice(1))}>{data.name}</li></Link>
               ))}
             </ul>
-            <div className='text-red-500/70 text-[16px] italic font-semibold cursor-pointer'>Logout</div>
+            <Link to={"/"}  className='text-red-500/70 text-[16px] italic font-semibold cursor-pointer'>Logout</Link>
 
             </div>
             

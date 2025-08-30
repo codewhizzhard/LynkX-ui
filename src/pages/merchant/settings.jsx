@@ -236,18 +236,18 @@ const Settings = () => {
         ref={fileInputRef}
         onChange={handleFileChange}/> <span className='w-full underline cursor-pointer'  onClick={handleClick}
             disabled={loading}>{loading? "Uploading..." : imageBase64 ? "Upload Image" : "Choose Image"}</span></div> */}
-            <div className='flex flex-col gap-1 w-full justify-center items-center'>
+            <div className='flex flex-col w-full justify-center items-center'>
                 <div className='flex  justify-start w-[50%]'><label htmlFor="" className='text-[#009FBD] text-[16px] font-semibold italic'>Edit Username</label></div>
                 <input type="text" className='w-[50%] bg-[#B0B0B0] rounded-[7px] p-2 outline-none text-[#292C31]' {...register("username")}/>
                 {errors?.username && <p className='text-red-500 text-[12px] w-[50%] flex justify-start'>{errors.username?.message}</p>} 
             </div>
-            <div className='flex flex-col gap-1 w-full justify-center items-center'>
+            <div className='flex flex-col w-full justify-center items-center'>
                 <div className='flex  justify-start w-[50%]'><label htmlFor="" className='text-[#009FBD] text-[16px] font-semibold italic'>Edit About</label></div>
                 <textarea type="text" className='w-[50%] bg-[#B0B0B0] rounded-[7px] p-2 outline-none text-[#292C31]' {...register("about")} />
                  {errors?.about && <p className='text-red-500 text-[12px] w-[50%] flex justify-start'>{errors.about?.message}</p>} 
             </div>
             <div className='flex w-[50%] justify-between'>
-                <button type="submit" className='bg-[#009FBD] rounded-[7px] text-white py-3 px-8 text-center cursor-pointer' >Save Changes</button>
+                <button type="submit" className='bg-[#009FBD] rounded-[7px] text-white py-2 px-8 text-center cursor-pointer' >Save Changes</button>
                 <button className='flex gap-1 items-center cursor-pointer pt-2' type='button' onClick={() => handleChangePage("wallet")}>Wallet <FiArrowRight className='pt-[3px]'/></button>
             </div>
             
@@ -284,8 +284,9 @@ const Settings = () => {
 
     {state.others && (
         <div className='bg-[#202225] rounded-[40px] p-3 h-[65vh] overflow-y-auto'>
-            <p className='p-1 text-center text-bold text-[20px]'>JUST A CLICK AWAY, EVERYTHING CIRCLE ⏺️</p>
-            <div className='flex gap-3 py-1 px-2'>
+            <p className='p-1 text-center text-bold text-[20px]'>JUST A CLICK AWAY FROM YOUR WORKSPACE</p>
+            <div className='flex gap-3 py-1 px-2 text-center'>
+              {/* 
                 <div className='w-[70%] flex flex-col gap-3 bg-[#009FBD]/60 p-4 rounded-[20px]'>
                     <h2 className='text-center text-[18px] text-black font-semibold'>Explore more 🚀</h2>
                     <ol className='text-[17px] font-medium'>
@@ -294,8 +295,8 @@ const Settings = () => {
                         <li className='pt-2 pl-3 text-black'>Want a gasless transaction?</li>
                     </ol>
                     <button type='button' className='bg-white text-black py-2 rounded-[8px] cursor-pointer'>Just A Click Away</button>
-                    </div>
-                <div className='w-[70%] flex flex-col gap-3 bg-[#009FBD]/60 p-4 rounded-[20px]'>
+                    </div> */}
+                <div className='w-[70%] flex flex-col gap-3 bg-[#009FBD]/60 p-4 rounded-[20px] mx-auto pb-7'>
                 <h2 className='text-center text-[18px] text-black font-semibold'>Workspace 👌</h2>
                 {storedWorkspace.length > 0 && storedWorkspace.map((workspace, index) => (
                     <a href={workspace}  key={index} target='_blank' rel='noopener noreferrer' className='cursor-pointer'>{workspace}</a>
@@ -306,7 +307,7 @@ const Settings = () => {
                  <input type="text" placeholder='paste your website link here' className='w-[70%] outline-none p-2 border-white border bg-white rounded-[7px]' onChange={(e) => setWorkspace(e.target.value)}/>
                 </div>}
                 <div>
-                    <button  type='button' className='w-full' >
+                    <button  type='button' className='w-full pt-2' >
                         {addWorkspace ? <span className='bg-white text-black py-2 px-5 w-[35%] rounded-[4px] mt-4 cursor-pointer' onClick={handleAddWorkspace}>Add</span> : <span onClick={() => setAddWorkspace(true)} className='bg-white text-black p-2 w-[35%] rounded-[4px] mt-4 cursor-pointer' >Add Workspace</span>}
                     </button>
                 </div>
@@ -319,7 +320,7 @@ const Settings = () => {
                 </div>
 
             </div>
-            <div className='flex w-full justify-between px-2 cursor-pointer'><span className='flex gap-1 items-center' onClick={() => handleChangePage("wallet")}><FiArrowLeft  className='pt-[2px]'/> Wallet</span> <span className='flex gap-1 items-center' onClick={() => handleChangePage("profile")}>Profile <FiArrowRight className='pt-[2px]'/></span></div>
+            <div className='flex w-full justify-between px-2 cursor-pointer pt-5'><span className='flex gap-1 items-center' onClick={() => handleChangePage("wallet")}><FiArrowLeft  className='pt-[2px]'/> Wallet</span> <span className='flex gap-1 items-center' onClick={() => handleChangePage("profile")}>Profile <FiArrowRight className='pt-[2px]'/></span></div>
             
         </div>
     )}

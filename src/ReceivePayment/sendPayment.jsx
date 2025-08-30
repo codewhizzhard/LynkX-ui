@@ -154,16 +154,15 @@ const SendPayment = () => {
     
      const handleSend = async() => {
         if (!isConnected) {
-            const metamask = connectors.find(c => c.id === 'metaMask')
-            if (metamask) connect({ connector: metamask })
+            alert("CONNECT YOUR WALLET")
+             return
         }
-
-        setErrMessage(false)
         
+        setErrMessage(false)
         setTransact(true)
         if (balance < parseFloat(paymentDetails?.amount.$numberDecimal)) {
             alert("Insufficient USDC balance. Please fund your wallet.")
-            setTransact(true)
+            setTransact(false)
             return 
         }
      
@@ -177,10 +176,10 @@ const SendPayment = () => {
 
             const tkMess = circleContracts["TokenMessengerV2"][optionName]
             const transminterAddress = circleContracts["MessageTransmitterV2"][nameTochainMap[paymentDetails?.token.chain]]
+            console.log("transact:", transact)
             if (sourceDomainId === destinationDomainId) {
-                setTransact(true)
-                sendUSDC(paymentDetails.receiverAddress, paymentDetails.amount.$numberDecimal, usdcAddress)
-                alert("INITIATED")
+              
+                await sendUSDC(paymentDetails.receiverAddress, paymentDetails.amount.$numberDecimal, usdcAddress)
                 setTransact(false)
             } else {
             const res = await cctpData.get(`/cctpv2/get-usdc-fee/${sourceDomainId}/${destinationDomainId}`);
@@ -214,6 +213,7 @@ const SendPayment = () => {
         }
 
         } catch (err) {
+          console.log("err:", err)
             if (err.code === "ERR_BAD_REQUEST") {
                 setTransact(false)
                 setErrMessage(true); 
@@ -384,7 +384,7 @@ const handleSend = async () => {
 
                      <main className='mt-15 flex justify-between '>
                             <div className='w-full flex flex-col gap-8 mt-15'>
-                                <div className='flex justify-between bg-[#D9D9D9] p-1 cursor-pointer'><button className={`w-[48%] ${cctpv2Option === "fast" ? "bg-purple-500" : ""} text-center rounded-[5px] cursor-pointer p-1`} type='button' onClick={() => handleChangeCctpv2Option("fast")}>Fast Transfer 🚀</button><button className={`w-[48%] ${cctpv2Option === "standard" ? "bg-purple-500" : ""} text-center rounded-[5px] cursor-pointer p-1`} type='button' onClick={() => handleChangeCctpv2Option("standard")}>Standard Transfer 🛡️</button></div>
+                                <div className='flex justify-between bg-[#D9D9D9] p-1 cursor-pointer'><button className={`w-[48%] bg-purple-500 ${cctpv2Option === "fast" ? "bg-purple-500" : ""} text-center rounded-[5px] cursor-pointer p-1`} type='button' onClick={() => handleChangeCctpv2Option("fast")}>Fast Transfer 🚀</button><button className={`w-[48%] ${cctpv2Option === "standard" ? "bg-purple-500" : ""} text-center rounded-[5px] cursor-pointer p-1`} type='button' /* onClick={() => handleChangeCctpv2Option("standard")} */>Standard Transfer 🛡️</button></div>
                                 <div className='flex gap-2 justify-between w-full'>
                                     <div className='flex flex-col w-[48%] '>
                                         <label htmlFor="" className='text-[14px]'>Destination Chain:</label>
@@ -410,7 +410,7 @@ const handleSend = async () => {
                                         <input type="text"  className='bg-[#D9D9D9] p-2 pl-3 rounded-[6px] outline-none text-black ' value={`$${paymentDetails.amount.$numberDecimal}`} readOnly/>
                                     </div>
                                     <div className='w-[48%] flex items-end h-full'>
-                                        <button className='w-full bg-red-600 rounded-[9px] h-[67%] items-end cursor-pointer' onClick={handleSend}>{!transact ? "Send" : "sending"} </button>
+                                        <button className='w-full bg-red-600 rounded-[9px] h-[67%] items-end cursor-pointer' onClick={handleSend}>{transact ? "Sending" : "Send" } </button>
 
                                     </div>
                                     

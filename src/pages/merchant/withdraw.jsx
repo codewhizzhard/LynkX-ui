@@ -6,7 +6,7 @@ import {z} from "zod";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { setBalance } from 'viem/actions';
-
+import "./scroll.css"
 
 const Withdraw = () => {
 
@@ -17,13 +17,10 @@ const Withdraw = () => {
     const [chains, setChains] = useState([]);
     const [selectedChain, setSelectedChain] = useState("");
     const [openChainSelection, setOpenChainSelection] = useState(false);
-    //const [openDestDomain, setOpenDestDomain] = useState(false);
-   // const [destDomain, setDestDomain] = useState("");
     const [selectedDestination, setSelectedDestination] = useState(null);
-    //const [destWalletId, setDestWalletId] = useState("");
     const [destOpen, setDestOpen] = useState(false);
-    //const [sourceDomain, setSourceDomain] = useState("");
     const [loading, setLoading] = useState(false);
+    const [err, setErr] = useState(false);
 
     const to = isConnected && address;
     const [option, setOption] = useState("send")
@@ -99,7 +96,7 @@ const Withdraw = () => {
                 if (tokens.status === 200) {
                     const token = tokens.data?.walletBalance.find((tk) => tk.token.symbol === data.chain)
                     const res = await lynkXData.post("/send-transaction", {amount: data.amount, destinationAddress: data.address, tokenId: token.token.id , walletId: selected.id, blockchain: selected.blockchain})
-                    console.log(res)
+                    console.log("t", res)
                     if (res.status === 200) {
                         setLoading(false)
                         alert(`Transaction ${res?.data?.data?.state}`)
@@ -109,6 +106,9 @@ const Withdraw = () => {
             } catch (err) {
                 console.log("err:", err)
                 setLoading(false)
+                 if (err?.status === 404) {
+                    alert("Failed, try again and make sure you have sufficient balance")
+                }
             }
         }
 
@@ -125,7 +125,10 @@ const Withdraw = () => {
                 }
 
             } catch (err) {
-                console.log("err", err)
+                console.log("err", err.status)
+                if (err?.status === 404) {
+                    alert("Failed, try again and make sure you have sufficient balance")
+                }
                 setLoading(false)
             }
         }
@@ -149,6 +152,7 @@ const Withdraw = () => {
         'BASE-SEPOLIA': "baseSepolia",
         "AVAX-FUJI": "avalancheFuji"
      };
+     console.log("selected:", selectedDestination)
 
     return (
       <section className=' flex flex-col text-[#B0B0B0]'>
@@ -171,13 +175,13 @@ const Withdraw = () => {
                                 <span className='text-[#B0B0B0] font-semibold text-[16px]'>From</span>
                                 <div className="relative w-[34vw]">
                                 {/* Selected wallet */}
-                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-1 px-3 cursor-pointer border border-[#009FBD] items-center gap-1' onClick={() => setOpen(!open)}>
+                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-1 px-3 cursor-pointer border border-[#009FBD] items-center gap-1' onClick={() => {setOpen(!open); setDestOpen(false)}}>
                                 <div
                                 
                                 className=" flex flex-col gap-1"
                             >
                                 <span className="font-semibold">
-                                {selected?.walletName.toUpperCase() }
+                                {selected?.walletName.toUpperCase() } 
                                 </span>
                                 <span className="font-semibold">
                                 {selected?.address}
@@ -196,7 +200,7 @@ const Withdraw = () => {
                                     onClick={() => handleSelect(wallet)}
                                     className="px-3 py-2 bg-gray-100 cursor-pointer border-[#009FBD] border"
                                     >
-                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"}</div>
+                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"} <span className='pl-14 text-[15px] text-[#0a5c6c]'> {selected?.blockchain }</span></div>
                                     <div className="text-sm text-gray-500">
                                         {wallet.address}
                                     </div>
@@ -223,13 +227,13 @@ const Withdraw = () => {
                                 <div className='flex gap-1'>
                                     <div className="relative w-full">
                                 {/* Selected wallet */}
-                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-1 px-3 cursor-pointer border border-[#009FBD] items-center gap-1' onClick={() => setDestOpen(!destOpen)}>
+                            <div className='flex justify-between bg-[#B0B0B0] rounded-[10px] py-1 px-3 cursor-pointer border border-[#009FBD] items-center gap-1' onClick={() => {setDestOpen(!destOpen); setOpen(false)}}>
                                 <div
                                 
                                 className=" flex flex-col gap-1"
                             >
                                 <span className="font-semibold">
-                                {selectedDestination?.walletName.toUpperCase() }
+                                {selectedDestination?.walletName.toUpperCase() } 
                                 </span>
                                 <span className="font-semibold">
                                 {selectedDestination?.address}
@@ -248,7 +252,7 @@ const Withdraw = () => {
                                     onClick={() => handleSelectDestination(wallet)}
                                     className="px-3 py-2 bg-gray-100 cursor-pointer border-[#009FBD] border"
                                     >
-                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"}</div>
+                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"} <span className='pl-14 text-[15px] text-[#0a5c6c]'> {selectedDestination?.blockchain }</span> </div>
                                     <div className="text-sm text-gray-500">
                                         {wallet.address}
                                     </div>
@@ -275,11 +279,11 @@ const Withdraw = () => {
                                 <div className='flex flex-col gap-2 w-[50%]'>
                                     {/* <span className='text-[#B0B0B0] font-semibold text-[16px]'>Amount</span> */}
                                      {errors?.amount && <p className='text-red-500 text-[12px] w-[50%] flex justify-start mt-0'>{errors.amount?.message}</p>} 
-                                     <div>
+                                     <div className='flex relative'>
                                        
-                                        <input type="text" className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-3 outline-none border border-[#009FBD]' placeholder='amount' {...register("amount")}/></div>
+                                       <FiDollarSign className='absolute top-[18px] left-1'/> <input type="text" className='bg-[#B0B0B0] text-[#292C31] rounded-[10px] py-3 w-full px-6 outline-none border border-[#009FBD]' placeholder='amount' {...register("amount")}/> </div>
                                 </div>
-                                <button type='submit' className='w-[45%] bg-[#009FBD] h-[58%]  rounded-[11px] cursor-pointer'>{loading ? "Loading..." : "Confirm"}</button>
+                                <button type='submit' className={`w-[45%]  h-[58%]  rounded-[11px]  ${loading ? "bg-[#94cbd6] " : "bg-[#009FBD] cursor-pointer"}`} disabled={loading}>{loading ? "Loading..." : "Confirm"}</button>
                             </div>
                         </div>
                     )
@@ -307,7 +311,7 @@ const Withdraw = () => {
                         </div>
                     ) */
                 }
-                <button type='submit'>Confirm</button>
+                <button type='submit' disabled={loading}>Confirm</button>
             </form>
         </div>
         </section>

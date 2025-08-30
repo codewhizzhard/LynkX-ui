@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FiArrowDown, FiArrowLeft, FiArrowUp, FiCheck, FiCopy } from 'react-icons/fi';
+import { FiArrowDown, FiArrowLeft, FiArrowUp, FiCheck, FiCopy, FiDollarSign } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import UseThrottleFunction from '../../hooks/useThrottleFunction';
 import z from 'zod';
@@ -9,6 +9,7 @@ import lynkXData from '../../service/axios';
 import { useAbi } from "../../context/abiContext";
 import {  useReadContract, useWriteContract, useChainId, useAccount } from "wagmi";
 import { useApproveUSDC } from '../../hooks/circleHooks/approve';
+import "./scroll.css"
 
 /* // Map Wagmi chain IDs to your backend keys
 function normalizeChainName(chainId) {
@@ -140,22 +141,23 @@ const Receive = () => {
                         </span>
                         </div>
                         <div className='flex justify-between w-full'>
-                            <span className='flex flex-col w-[100%] items-center'>
-                            <input type="text" className='bg-[#B0B0B0] w-[85%] py-4 rounded-[7px] px-3 outline-none' placeholder='#amount:: compulsory' {...register("amount")}/>
+                            <span className='flex flex-col w-[100%] items-center relative'>
+                                <FiDollarSign className='absolute top-[20px] left-8'/>
+                            <input type="text" className='bg-[#B0B0B0] w-[85%] py-4 rounded-[7px] pl-5 outline-none' placeholder='amount: compulsory' {...register("amount")}/>
                             {errors?.amount && <p className='text-red-500 text-[12px] w-[85%] flex justify-start mt-1'>{errors.amount?.message}</p>} 
                         </span>
                         <span className='flex flex-col items-center w-[100%] relative'>
                             <div className='bg-[#B0B0B0] w-[85%] py-4 rounded-[7px] px-3 outline-none flex justify-between items-center cursor-pointer'   onClick={() => setOpen((prev) => !prev)}>{selectedAddress ? selectedAddress?.walletName.toUpperCase() : "pick a chain"} {open ? <FiArrowUp className='text-[20px]'/> : <FiArrowDown className='text-[20px]' /> }</div>
                             {open && wallets &&  (
-                                <div className="absolute mt-2 bg-white rounded-[10px] shadow-lg z-10 w-[85%] top-13 h-34 py-2 overflow-y-auto">
+                                <div className="absolute mt-2 bg-white rounded-[10px] shadow-lg z-10 w-[85%] top-13 h-34 py-2 overflow-y-auto scroll-invisible flex flex-col gap-2">
                                     {walletLoader ? <p className='text-gray-500 text-center'>Loading wallets...</p> : wallets?.length === 0 && <p className='text-gray-500 text-center'>No wallets found</p>}
                                     {wallets?.length > 0 && wallets.map((wallet, i) => (
                                     <div
                                     key={i}
                                     onClick={() => {handleSelect(wallet); setOpen(false)}}
-                                    className=" p-1 pl-2 bg-gray-100 cursor-pointer border-[#009FBD] border-y rounded-[10px]"
+                                    className=" p-1 pl-2 bg-gray-100 cursor-pointer border-[#009FBD] border-y rounded-[10px] "
                                     >
-                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"}</div>
+                                    <div className="font-bold flex gap-4">{wallet.walletName.toUpperCase() || "Unnamed"} <span className='text-[15px] text-[#0a5c6c]'>{wallet.blockchain}</span></div>
                                     <div className="text-[13px] text-gray-500">
                                         {wallet.address}
                                     </div>
@@ -173,7 +175,7 @@ const Receive = () => {
                     </div>
                      <div className='flex justify-between w-[80%]'>
                         <button className='text-white bg-[#202225] py-3 px-8 rounded-[11px] text-[16px] font-semibold cursor-pointer border-2 border-[#009FBD] flex items-center gap-1' type='button' onClick={() => {reset(); setLink(""); setLoader(false); setSelectedAddress("")}}> {/* <FiArrowLeft className='text-[20px]'/> */}Clear</button>
-                        <button className='text-white bg-[#009FBD] py-3 px-10 rounded-[11px] text-[16px] font-semibold cursor-pointer ' type='submit'>Generate</button>
+                        <button className={`text-white py-3 px-10 rounded-[11px] text-[16px] font-semibold  ${loader ? "bg-[#011518]" : "bg-[#009FBD] cursor-p"}`} type='submit' disabled={loader}>Generate</button>
                     </div>
                 </form>
             </div>

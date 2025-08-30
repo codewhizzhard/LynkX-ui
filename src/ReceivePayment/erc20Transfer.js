@@ -17,13 +17,14 @@ export function useSendUSDC(chainName) {
     setIsLoading(true)
     try {
       const decimals = 6 // USDC decimals
-      const txHash = await writeContract({
+      const txHash =  writeContract({
         address: usdcAddress,
         abi: erc20Abi,
         functionName: 'transfer',
         args: [to, parseUnits(amount.toString(), decimals)],
       })
       setHash(txHash)
+      alert("PROCESSING TRANSACTION")
       return txHash
     } catch (err) {
       console.error(err)
