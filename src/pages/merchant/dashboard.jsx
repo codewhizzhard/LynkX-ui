@@ -126,7 +126,7 @@ const Dashboard = () => {
         {!loading && reLogin && <p className='w-full text-center'>Sign in timeout, log in again to restart</p>}
         {!loading && wallets.length === 0 && <p className='w-full text-600/50 text-center text-[21px] font-bold pt-10'>Welcome to LynkX, go ahead and create wallet to get started</p>}
         {Array.isArray(wallets) && wallets.length > 0 && wallets.map((wallet, index) => (
-          <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] pt-5 pb-1 px-4' key={index}>
+          <li className='bg-[#3F4246] rounded-[20px] list-none flex flex-col gap-2 items-center w-[310px] h-[160px] pt-5 pb-1 px-4 relative' key={index}>
             <span className='flex justify-between w-full '>Wallet Name: <span>{wallet?.walletName?.toUpperCase()}</span></span>
            
             <span className='w-full flex flex-col'>
@@ -139,6 +139,7 @@ const Dashboard = () => {
                 
               ))}
             </span>
+              <span className='absolute text-center bottom-3 text-[#3ecfec]'>{wallet.blockchain}</span>
             
             {/* <div className='flex '>
               <button>Withraw</button>
