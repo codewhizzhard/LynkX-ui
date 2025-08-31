@@ -200,7 +200,7 @@ const Withdraw = () => {
                                     onClick={() => handleSelect(wallet)}
                                     className="px-3 py-2 bg-gray-100 cursor-pointer border-[#009FBD] border"
                                     >
-                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"} <span className='pl-14 text-[15px] text-[#0a5c6c]'> {selected?.blockchain }</span></div>
+                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"} <span className='pl-14 text-[15px] text-[#0a5c6c]'> {wallet?.blockchain }</span></div>
                                     <div className="text-sm text-gray-500">
                                         {wallet.address}
                                     </div>
@@ -252,7 +252,7 @@ const Withdraw = () => {
                                     onClick={() => handleSelectDestination(wallet)}
                                     className="px-3 py-2 bg-gray-100 cursor-pointer border-[#009FBD] border"
                                     >
-                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"} <span className='pl-14 text-[15px] text-[#0a5c6c]'> {selectedDestination?.blockchain }</span> </div>
+                                    <div className="font-bold">{wallet.walletName.toUpperCase() || "Unnamed"} <span className='pl-14 text-[15px] text-[#0a5c6c]'> {wallet?.blockchain }</span> </div>
                                     <div className="text-sm text-gray-500">
                                         {wallet.address}
                                     </div>
